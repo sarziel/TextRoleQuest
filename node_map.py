@@ -794,6 +794,559 @@ Seus olhos são perspicazes e parecem enxergar além de sua aparência física, 
         ]
     },
     
+    "truth_to_priest": {
+        "title": "Revelações ao Sacerdote",
+        "text": """Você decide que a honestidade é o melhor caminho e conta sua história completa a Adewale - como você veio de outro tempo através do amuleto que tocou em uma escavação arqueológica.
+
+O sacerdote ouve atentamente, sem interromper. Seus olhos se arregalam quando você menciona o amuleto, e ele pede para vê-lo. Quando você mostra o objeto, Adewale solta uma exclamação de surpresa.
+
+"O Amuleto de Ashe," ele sussurra. "Uma relíquia sagrada perdida há gerações. Ele permite que seu portador canalize o ashe - a energia vital que flui entre todos os reinos." Ele levanta os olhos para você. "Você foi trazido aqui por um propósito. Os Òrìṣà não fazem nada sem razão."
+
+Ele parece considerar algo por um momento antes de tomar uma decisão.""",
+        "choices": [
+            {
+                "text": "Perguntar qual seria esse propósito",
+                "next_node": "ask_about_purpose"
+            },
+            {
+                "text": "Pedir ajuda para voltar ao seu próprio tempo",
+                "next_node": "ask_help_return"
+            },
+            {
+                "text": "Perguntar sobre o Amuleto de Ashe e seus poderes",
+                "next_node": "ask_about_amulet_powers"
+            }
+        ]
+    },
+    
+    "ask_about_temple": {
+        "title": "O Templo de Sango",
+        "text": """Você pergunta a Adewale sobre o templo e seu significado. O sacerdote sorri, aparentemente satisfeito com seu interesse.
+
+"Este é o Templo Principal de Sango na região," ele explica. "Foi construído há sete gerações, após uma grande tempestade devastar nossa aldeia. O povo interpretou a tempestade como um sinal da ira de Sango e ergueu este templo para apaziguá-lo."
+
+"Sango é o Òrìṣà do trovão, do fogo e da justiça. Era o quarto rei de Oyo antes de sua ascensão divina. Aqui realizamos rituais para pedir sua proteção, sua justiça e sua orientação." Ele faz um gesto em direção ao altar. "O machado de bronze é seu símbolo principal, representando o poder do trovão e o julgamento implacável sobre os injustos."
+
+Adewale o observa com curiosidade. "Mas você não é daqui. Como veio parar em nosso templo?".""",
+        "choices": [
+            {
+                "text": "Contar a verdade sobre sua origem e o amuleto",
+                "next_node": "truth_to_priest"
+            },
+            {
+                "text": "Dizer que é apenas um viajante curioso",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "convince_priest_traveler",
+                "failure_node": "priest_suspicious"
+            },
+            {
+                "text": "Perguntar sobre os outros Òrìṣà",
+                "next_node": "ask_about_orishas"
+            }
+        ]
+    },
+    
+    "ask_about_events": {
+        "title": "Eventos Misteriosos",
+        "text": """Você pergunta a Adewale sobre os estranhos eventos que tem testemunhado desde sua chegada - o portal, o amuleto, as visões, a capacidade de entender um idioma que nunca estudou.
+
+O sacerdote ouve com atenção crescente, e seu rosto se torna mais sério a cada detalhe que você compartilha. Quando você termina, ele permanece em silêncio por alguns momentos.
+
+"Os sinais são claros," ele finalmente diz. "Os Òrìṣà trouxeram você aqui. Não é coincidência que você possa entender nossa língua ou que o templo o tenha admitido. E este amuleto..." Ele faz um gesto para que você o mostre. Quando você revela o objeto, ele assente gravemente.
+
+"O Amuleto de Ashe, um artefato sagrado que se acreditava perdido. Ele conecta os reinos dos homens e dos Òrìṣà. Sua chegada aqui, com este amuleto, sugere que uma grande perturbação está ocorrendo - ou irá ocorrer - no equilíbrio entre os mundos."
+
+Ele se aproxima mais de você. "Você deve me contar exatamente como chegou aqui.".""",
+        "choices": [
+            {
+                "text": "Contar detalhadamente sobre a escavação arqueológica e o portal",
+                "next_node": "explain_arrival"
+            },
+            {
+                "text": "Perguntar que tipo de perturbação poderia estar ocorrendo",
+                "next_node": "ask_about_disturbance"
+            },
+            {
+                "text": "Perguntar como voltar para casa",
+                "next_node": "ask_help_return"
+            }
+        ]
+    },
+    
+    "ask_about_purpose": {
+        "title": "O Propósito Divino",
+        "text": """Você pergunta a Adewale qual poderia ser o propósito dos Òrìṣà ao trazê-lo para este tempo e lugar.
+
+O sacerdote caminha lentamente até uma parede do templo onde há um mural elaborado. Ele aponta para uma seção que mostra figuras sombrias emergindo de uma fenda no céu, enquanto as divindades Yorùbá formam uma barreira protetora.
+
+"Existe uma antiga profecia," ele explica, "que fala de um tempo em que as barreiras entre os mundos ficariam enfraquecidas. Quando isso acontecesse, forças do caos tentariam invadir nosso reino." Ele toca o mural onde uma figura segura um objeto que se parece notavelmente com seu amuleto.
+
+"A profecia também menciona um viajante de terras além do conhecimento, que carregaria o Amuleto de Ashe e ajudaria a restaurar o equilíbrio." Ele se vira para você com um olhar penetrante. "Recentemente, temos observado sinais preocupantes. Tempestades anormais. Avistamentos de criaturas estranhas nas florestas. E agora, você chega."
+
+"Acredito que você foi trazido para nos ajudar a prevenir uma catástrofe."
+""",
+        "choices": [
+            {
+                "text": "Perguntar como poderia ajudar a prevenir essa catástrofe",
+                "next_node": "hero_mission"
+            },
+            {
+                "text": "Expressar ceticismo quanto a ser um escolhido de uma profecia",
+                "next_node": "skeptical_response"
+            },
+            {
+                "text": "Perguntar mais detalhes sobre as forças do caos mencionadas",
+                "next_node": "chaos_forces"
+            }
+        ]
+    },
+    
+    "ask_help_return": {
+        "title": "O Caminho de Volta",
+        "text": """Você pergunta a Adewale se ele pode ajudá-lo a retornar ao seu próprio tempo. O sacerdote considera sua pergunta com seriedade.
+
+"O Amuleto de Ashe abriu o caminho que o trouxe até aqui," ele diz após alguns momentos. "Em teoria, ele poderia levá-lo de volta. Mas tais viagens não são simples nem sem propósito."
+
+Ele toca levemente o amuleto em seu pescoço. "Este artefato é uma relíquia sagrada de Orunmila, o Òrìṣà da sabedoria e da adivinhação. Ele não o teria trazido aqui sem um motivo importante."
+
+O olhar de Adewale se torna distante, como se contemplasse algo além das paredes do templo. "Há perturbações no equilíbrio entre os reinos. Sinais que os sacerdotes de todos os quatro grandes Òrìṣà têm observado com preocupação." Ele volta a focar em você.
+
+"Acredito que você só poderá retornar ao seu tempo quando cumprir o propósito pelo qual foi trazido."
+""",
+        "choices": [
+            {
+                "text": "Perguntar qual seria esse propósito",
+                "next_node": "ask_about_purpose"
+            },
+            {
+                "text": "Pedir para aprender mais sobre o amuleto e como usá-lo",
+                "next_node": "learn_about_amulet"
+            },
+            {
+                "text": "Oferecer sua ajuda para resolver as perturbações mencionadas",
+                "next_node": "offer_help"
+            }
+        ]
+    },
+    
+    "learn_about_amulet": {
+        "title": "Os Segredos do Amuleto",
+        "text": """Você pede a Adewale para lhe ensinar mais sobre o Amuleto de Ashe e como utilizá-lo. O sacerdote faz um gesto para que você o siga até uma sala adjacente do templo.
+
+A sala é menor e iluminada por velas de óleo que emitem uma luz dourada. Nas paredes há diversos símbolos e diagramas pintados que parecem mapear conexões entre diferentes reinos ou dimensões.
+
+"O Amuleto de Ashe é um dos quatro grandes artefatos criados pelos primeiros sacerdotes de Yorùbáland," explica Adewale, indicando um desenho na parede que mostra quatro objetos dispostos em um círculo. "Cada um está conectado a um dos principais Òrìṣà: Sango, Ogun, Yemoja e Osun."
+
+Ele toca suavemente o amuleto em seu pescoço. "Este, em particular, serve como um condutor do ashe – a força vital universal. Em mãos treinadas, pode abrir portais entre mundos, conceder visões do futuro e do passado, e até mesmo amplificar os dons naturais de seu portador."
+
+Adewale se senta em uma esteira no chão e indica para que você faça o mesmo. "Posso ensiná-lo a canalizar o poder do amuleto, mas deve entender que tal conhecimento vem com responsabilidade. Os Òrìṣà não concedem tais dons sem expectativa de que sejam usados com sabedoria."
+""",
+        "choices": [
+            {
+                "text": "Aceitar o treinamento para usar o amuleto",
+                "next_node": "amulet_training"
+            },
+            {
+                "text": "Perguntar sobre os outros três artefatos",
+                "next_node": "four_artifacts"
+            },
+            {
+                "text": "Perguntar sobre os perigos de usar tal poder",
+                "next_node": "amulet_dangers"
+            }
+        ]
+    },
+    
+    "offer_help": {
+        "title": "Oferecendo Assistência",
+        "text": """Você diz a Adewale que está disposto a ajudar a resolver as perturbações mencionadas. O rosto do sacerdote se ilumina com um sorriso.
+
+"Eu sabia que os Òrìṣà escolheram bem," ele diz com aprovação. "Sua disposição honra seus ancestrais, mesmo que eles ainda não tenham nascido em seu tempo."
+
+Adewale caminha até um baú ornamentado no canto da sala e retira um pergaminho envelhecido. Desenrolando-o sobre uma mesa baixa, revela um mapa da região de Yorùbáland, com quatro locais marcados em símbolos diferentes.
+
+"Estes são os quatro templos principais, cada um dedicado a um dos grandes Òrìṣà," explica ele, apontando para os símbolos. "Estamos aqui, no Templo de Sango. Os outros são o Templo de Ogun nas montanhas de ferro, o Templo de Yemoja junto ao grande rio, e o Templo de Osun na floresta sagrada."
+
+Seu dedo traça uma linha entre os quatro pontos, formando um quadrado. "Juntos, eles mantêm o equilíbrio espiritual de nossa terra. Mas recebi notícias perturbadoras dos outros templos. Artefatos sagrados foram roubados de cada um, enfraquecendo a barreira entre os mundos."
+
+Ele olha gravemente para você. "Acredito que você foi enviado para nos ajudar a recuperá-los antes que seja tarde demais."
+""",
+        "choices": [
+            {
+                "text": "Perguntar quem poderia estar roubando os artefatos",
+                "next_node": "ask_about_thief"
+            },
+            {
+                "text": "Oferecer-se para recuperar os artefatos",
+                "next_node": "accept_quest"
+            },
+            {
+                "text": "Perguntar como os artefatos mantêm o equilíbrio",
+                "next_node": "artifacts_purpose"
+            }
+        ]
+    },
+    
+    "hero_mission": {
+        "title": "A Missão do Herói",
+        "text": """Você pergunta a Adewale como poderia ajudar a prevenir a catástrofe que ele teme estar se aproximando.
+
+O sacerdote o conduz para uma câmara interna do templo, onde um grande mapa de Yorùbáland está pintado em uma mesa de pedra. Ele indica quatro locais marcados com símbolos distintos.
+
+"Estes são os quatro templos principais de nossa terra, cada um guardião de um artefato sagrado que, juntos, mantêm a barreira entre os mundos," explica ele. "O Machado de Sango, a Espada de Ogun, o Cálice de Yemoja e o Espelho de Osun."
+
+Seu rosto se torna sombrio quando continua: "Nas últimas luas, três desses artefatos foram roubados por Adigun, um sacerdote exilado que busca romper a barreira e liberar poderes caóticos em nosso mundo. Apenas o Machado de Sango permanece seguro, aqui neste templo."
+
+Adewale toca o amuleto em seu pescoço. "Seu Amuleto de Ashe pode detectar os outros artefatos e, em mãos dignas, neutralizar o ritual que Adigun pretende realizar. Você deve recuperar os artefatos roubados antes que ele colete o último e complete seu plano."
+
+Uma responsabilidade enorme pesa sobre seus ombros enquanto você considera as palavras do sacerdote.""",
+        "choices": [
+            {
+                "text": "Aceitar a missão para salvar Yorùbáland",
+                "next_node": "accept_hero_role"
+            },
+            {
+                "text": "Pedir mais informações sobre Adigun e seus motivos",
+                "next_node": "about_adigun"
+            },
+            {
+                "text": "Perguntar se haverá alguém para ajudá-lo nesta missão",
+                "next_node": "ask_about_allies"
+            }
+        ]
+    },
+    
+    "skeptical_response": {
+        "title": "Dúvidas Razoáveis",
+        "text": """Você expressa seu ceticismo quanto a ser algum tipo de escolhido profético. Afinal, você é apenas um pesquisador que tocou um artefato estranho e acabou em outro tempo - não um herói de lendas.
+
+Adewale não parece ofendido com sua hesitação. Ao contrário, ele assente compreensivamente.
+
+"A dúvida é natural, e talvez até saudável," ele diz. "Os maiores heróis de nossas histórias raramente começaram acreditando em seu próprio destino. Foi sua disposição para agir, apesar das dúvidas, que os definiu."
+
+Ele caminha até uma pequena mesa e pega um objeto coberto por um pano. Ao remover o tecido, revela um pequeno dispositivo circular com engrenagens e símbolos entalhados.
+
+"Este é um oráculo de Ifa, usado para comunicação com Orunmila, o Òrìṣà da sabedoria e adivinhação." Ele manipula o dispositivo, que emite um suave brilho azulado. "Permita-me consultar os oráculos sobre sua chegada."
+
+Adewale realiza um breve ritual, lançando pequenas conchas sobre o dispositivo. Os padrões formados parecem significativos para ele, pois seu rosto se torna sério enquanto os estuda.""",
+        "choices": [
+            {
+                "text": "Perguntar o que os oráculos revelaram",
+                "next_node": "oracle_revelation"
+            },
+            {
+                "text": "Admitir que talvez haja algo maior acontecendo",
+                "next_node": "accepting_destiny"
+            },
+            {
+                "text": "Manter o ceticismo, mas oferecer ajuda de qualquer forma",
+                "next_node": "skeptical_helper"
+            }
+        ]
+    },
+    
+    "chaos_forces": {
+        "title": "As Forças do Caos",
+        "text": """Você pede a Adewale que explique mais sobre as forças do caos mencionadas na profecia. O sacerdote olha ao redor, como se verificando que estão sozinhos, antes de falar em voz mais baixa.
+
+"Além do mundo dos homens e do reino dos Òrìṣà, existe um terceiro domínio," ele começa. "Um lugar de energia bruta e caótica, habitado por entidades que não são nem mortais nem divinas. Nós as chamamos de Ajoguns - forças de destruição, doença e desordem."
+
+Adewale conduz você a uma seção do templo onde as pinturas murais mostram criaturas perturbadoras - figuras distorcidas com múltiplos membros, olhos em lugares errados, e corpos que parecem violar as leis da natureza.
+
+"Os Ajoguns invejam tanto a ordem do mundo dos Òrìṣà quanto a liberdade do mundo mortal. Eles constantemente buscam brechas na barreira que separa os reinos." Ele aponta para uma pintura mostrando quatro objetos formando um círculo protetor. "Por milênios, os quatro artefatos sagrados mantiveram essa barreira intacta."
+
+O sacerdote se vira para encará-lo com expressão grave. "Mas agora, três dos artefatos foram roubados. A barreira enfraquece a cada dia. Se o último for tomado... os Ajoguns invadir
+ão nosso mundo, trazendo caos e sofrimento imensuráveis.""",
+        "choices": [
+            {
+                "text": "Perguntar quem roubou os artefatos",
+                "next_node": "artifacts_thief"
+            },
+            {
+                "text": "Perguntar como você pode ajudar a recuperá-los",
+                "next_node": "recover_artifacts"
+            },
+            {
+                "text": "Perguntar se os Ajoguns podem ser combatidos diretamente",
+                "next_node": "fighting_ajoguns"
+            }
+        ]
+    },
+    
+    "artifacts_thief": {
+        "title": "O Ladrão de Artefatos",
+        "text": """Você pergunta a Adewale quem poderia estar roubando os artefatos sagrados. O sacerdote suspira profundamente, seu rosto mostrando uma mistura de raiva e tristeza.
+
+"Seu nome é Adigun," ele responde. "Um dos nossos, outrora. Foi um sacerdote promissor, talentoso em rituais e na comunicação com os Òrìṣà. Ele serviu no Templo de Yemoja por muitos anos."
+
+Adewale caminha até um pequeno baú, de onde retira um pedaço de pano dobrado. Ao abri-lo, revela um desenho de um homem jovem com marcas rituais no rosto e um olhar intenso.
+
+"Adigun acreditava que os Òrìṣà haviam se tornado distantes demais de nosso povo. Ele começou a estudar rituais proibidos, buscando formas de convocar os deuses à força, em vez de reverenciá-los propriamente." O sacerdote dobra o pano novamente. "Quando foi descoberto, o Conselho dos Sacerdotes o exilou para as terras do norte."
+
+"Agora ele retornou, não para adorar os Òrìṣà, mas para liberar os Ajoguns. Ele acredita que o caos purificará nosso mundo e forçará os Òrìṣà a intervir diretamente. Uma loucura perigosa."
+
+O rosto de Adewale se endurece. "Ele já roubou a Espada de Ogun, o Cálice de Yemoja e o Espelho de Osun. Apenas o Machado de Sango permanece, protegido neste templo."
+""",
+        "choices": [
+            {
+                "text": "Perguntar onde Adigun poderia estar escondido",
+                "next_node": "adigun_hideout"
+            },
+            {
+                "text": "Oferecer-se para ajudar a recuperar os artefatos",
+                "next_node": "accept_quest"
+            },
+            {
+                "text": "Perguntar se há outros que seguem Adigun",
+                "next_node": "adigun_followers"
+            }
+        ]
+    },
+    
+    "recover_artifacts": {
+        "title": "A Recuperação dos Artefatos",
+        "text": """Você pergunta a Adewale como poderia ajudar a recuperar os artefatos roubados. O sacerdote parece aliviado com sua disposição.
+
+"Os três artefatos roubados estão sendo mantidos em locais diferentes," explica ele, desenrolando um mapa sobre uma mesa. "Adigun é astuto - escondeu cada um em um lugar onde sua energia seria mascarada por energias naturais semelhantes."
+
+Ele aponta para três locais no mapa. "A Espada de Ogun está escondida nas Montanhas de Ferro ao norte, onde os depósitos minerais confundem sua presença. O Cálice de Yemoja está submerso no Lago da Lua a leste, suas águas protegidas por criaturas encantadas. E o Espelho de Osun foi levado para a Floresta dos Sussurros ao sul, onde ilusões e encantos protegem seus segredos."
+
+Adewale olha para você com seriedade. "Recuperar todos os três antes do próximo eclipse lunar - daqui a sete dias - é essencial. Nessa noite, Adigun pretenderá vir até este templo para roubar o Machado de Sango e completar seu ritual."
+
+"Seu Amuleto de Ashe será fundamental nesta missão. Ele pode sentir a presença dos artefatos e neutralizar algumas das proteções mágicas que Adigun colocou ao seu redor."
+""",
+        "choices": [
+            {
+                "text": "Perguntar qual artefato deve ser recuperado primeiro",
+                "next_node": "quest_priority"
+            },
+            {
+                "text": "Perguntar se haverá alguém para ajudá-lo",
+                "next_node": "ask_about_allies"
+            },
+            {
+                "text": "Pedir informações específicas sobre as defesas de cada local",
+                "next_node": "artifacts_defenses"
+            }
+        ]
+    },
+    
+    "fighting_ajoguns": {
+        "title": "Combatendo as Entidades do Caos",
+        "text": """Você pergunta se os Ajoguns podem ser combatidos diretamente, caso consigam invadir Yorùbáland. A expressão de Adewale se torna sombria.
+
+"Teoricamente, sim," ele responde com hesitação. "Mas não seria como lutar contra inimigos mortais. Os Ajoguns são manifestações de conceitos - doença, loucura, destruição. Eles não seguem as leis físicas como nós."
+
+O sacerdote caminha até um armário trancado e o abre com uma pequena chave que carrega ao pescoço. De dentro, retira uma pequena adaga com lâmina ondulada e inscrições brilhantes.
+
+"Armas comuns têm pouco efeito sobre eles. Apenas instrumentos infundidos com ashe - a energia vital dos Òrìṣà - podem realmente feri-los." Ele segura a adaga com reverência. "Esta é uma das poucas armas assim que possuímos, forjada com a bênção de Ogun."
+
+Adewale guarda a adaga novamente. "Mas mesmo com tais armas, o combate direto seria desastroso. Sua presença física no nosso mundo causaria distorções na realidade. Plantas murchariam, animais enlouqueceriam, pessoas adoeceriam apenas por estarem próximas."
+
+"É por isso que devemos a todo custo impedir que a barreira entre os mundos seja rompida. A prevenção é nossa única esperança real."
+""",
+        "choices": [
+            {
+                "text": "Perguntar se há outros métodos de defesa além das armas",
+                "next_node": "spiritual_defenses"
+            },
+            {
+                "text": "Oferecer sua ajuda para impedir Adigun",
+                "next_node": "accept_quest"
+            },
+            {
+                "text": "Perguntar se há registros de invasões anteriores dos Ajoguns",
+                "next_node": "previous_incursions"
+            }
+        ]
+    },
+    
+    "ask_about_thief": {
+        "title": "O Inimigo Revelado",
+        "text": """Você pergunta a Adewale quem poderia estar roubando os artefatos sagrados. O sacerdote fecha os olhos brevemente, como se a resposta lhe causasse dor.
+
+"Seu nome é Adigun," ele diz finalmente. "Foi um de nós, um sacerdote altamente talentoso do Templo de Yemoja. Era considerado um prodígio, com habilidade rara para comungar com os Òrìṣà."
+
+Adewale se levanta e caminha até um pequeno nicho na parede, de onde retira um pequeno medalhão. Abrindo-o, mostra a você um retrato miniatura de um homem jovem com traços severos e olhos penetrantes.
+
+"Adigun acreditava que nossa conexão com os Òrìṣà estava enfraquecendo por seguirmos tradições muito rígidas. Ele buscava meios mais diretos de comunicação com o divino." O sacerdote fecha o medalhão. "Com o tempo, suas ideias se tornaram cada vez mais extremas. Ele começou a experimentar com rituais proibidos, buscando forçar manifestações dos Òrìṣà."
+
+"Quando descobrimos seus experimentos, ele já havia se corrompido. O Conselho dos Sacerdotes o exilou. Juramos que ele nunca mais seria aceito em nenhum templo." Adewale suspira profundamente. "Acreditávamos que ele havia partido para terras distantes, mas agora retornou com um propósito terrível."
+
+"Adigun não busca mais comungar com os Òrìṣà - ele pretende romper completamente a barreira entre os mundos, permitindo que os Ajoguns, entidades do caos, invadam Yorùbáland."
+""",
+        "choices": [
+            {
+                "text": "Perguntar onde Adigun poderia estar escondido",
+                "next_node": "adigun_location"
+            },
+            {
+                "text": "Perguntar por que ele quer liberar os Ajoguns",
+                "next_node": "adigun_motives"
+            },
+            {
+                "text": "Oferecer-se para recuperar os artefatos roubados",
+                "next_node": "accept_quest"
+            }
+        ]
+    },
+    
+    "accept_quest": {
+        "title": "O Chamado da Aventura",
+        "text": """Você toma sua decisão e diz a Adewale que está disposto a ajudar a recuperar os artefatos sagrados. O sacerdote sorri com aprovação.
+
+"Seu coração é valoroso," ele diz. "Talvez seja este o motivo pelo qual os Òrìṣà o trouxeram até nós." 
+
+Ele se dirige a um baú ornamentado no canto da sala e retira alguns itens: um pequeno saco de couro contendo ervas e pós coloridos, um colar com contas vermelhas e brancas, e uma pequena adaga cerimonial.
+
+"Estes itens o ajudarão em sua jornada," explica, entregando-os a você. "As ervas têm propriedades curativas e podem ser usadas em rituais de proteção. O colar é uma benção de Sango e o protegerá de alguns perigos espirituais. A adaga foi consagrada para afetar entidades que armas comuns não conseguem tocar."
+
+Adewale desenrola um mapa antigo sobre uma mesa baixa. "Sugiro que comece pelo Templo de Ogun nas Montanhas de Ferro. A Espada sagrada pode ser a mais fácil de recuperar, e lhe dará força para os desafios seguintes."
+
+Ele marca três locais no mapa com símbolos diferentes. "Não tenho como saber exatamente quais perigos você enfrentará. Adigun tem seguidores e, provavelmente, proteções mágicas guardando os artefatos. Use o Amuleto de Ashe para guiá-lo - ele responderá à presença dos outros artefatos."
+""",
+        "choices": [
+            {
+                "text": "Pedir mais orientações sobre como usar o amuleto",
+                "next_node": "amulet_guidance"
+            },
+            {
+                "text": "Perguntar sobre possíveis aliados na jornada",
+                "next_node": "ask_about_allies"
+            },
+            {
+                "text": "Partir imediatamente para as Montanhas de Ferro",
+                "next_node": "iron_mountains_journey"
+            }
+        ]
+    },
+    
+    "adigun_location": {
+        "title": "O Esconderijo do Inimigo",
+        "text": """Você pergunta a Adewale se ele sabe onde Adigun poderia estar escondido. O sacerdote franze a testa, pensativo.
+
+"Não temos certeza da localização exata," ele admite. "Mas nossos batedores relataram atividades estranhas nas ruínas do antigo templo abandonado, no centro da Floresta Proibida."
+
+Ele se aproxima do mapa na parede e indica um ponto distante, marcado com um símbolo obscurecido. "Este local foi um grande templo há séculos, dedicado a todos os Òrìṣà. Foi abandonado após um terrível desastre - dizem que um ritual falhou e abriu brevemente um portal para o reino dos Ajoguns."
+
+Adewale traça um círculo ao redor da área com seu dedo. "A floresta ao redor se tornou corrupta, com plantas estranhas e criaturas anormais. Poucos ousam se aventurar lá. Seria o esconderijo perfeito para Adigun - um local já imbuído com energia caótica que mascara seus rituais."
+
+"Acreditamos que ele só deixará seu esconderijo na noite do eclipse lunar, para tentar roubar o Machado de Sango. É quando a barreira entre os mundos estará naturalmente mais fina, facilitando seu ritual final."
+
+Ele olha para você com seriedade. "Confrontá-lo diretamente seria extremamente perigoso. Nossa melhor esperança é recuperar os artefatos antes que ele complete seu plano."
+""",
+        "choices": [
+            {
+                "text": "Oferecer-se para recuperar os artefatos",
+                "next_node": "accept_quest"
+            },
+            {
+                "text": "Perguntar sobre as defesas que Adigun pode ter",
+                "next_node": "adigun_defenses"
+            },
+            {
+                "text": "Sugerir um ataque ao esconderijo de Adigun",
+                "next_node": "attack_suggestion"
+            }
+        ]
+    },
+    
+    "adigun_motives": {
+        "title": "O Plano Sinistro",
+        "text": """Você pergunta a Adewale por que Adigun desejaria liberar os Ajoguns, forças de destruição, em Yorùbáland. O sacerdote fecha os olhos brevemente, como se organizando pensamentos dolorosos.
+
+"É uma mistura de amargura, orgulho ferido e uma visão distorcida de salvação," ele explica. "Quando Adigun foi exilado, jurou que provaria estar certo - que nossos métodos de adoração eram insuficientes."
+
+Adewale caminha até uma janela e olha para o céu. "Durante seu exílio, encontrou textos antigos que falavam dos Ajoguns não apenas como forças de destruição, mas como catalisadores de renovação." 
+
+"Ele passou a acreditar que nosso mundo se tornou estagnado e corrupto. Que os Òrìṣà se afastaram por estarmos muito confortáveis em nossas tradições." O sacerdote se vira para você com expressão grave. "Adigun acredita que liberando os Ajoguns, forçará os Òrìṣà a intervir diretamente no mundo mortal."
+
+"Em sua mente perturbada, ele se vê como um salvador, não como um destruidor. Acredita que das cinzas do caos surgirá um mundo novo, onde os Òrìṣà caminharão entre os mortais novamente."
+
+"É claro que está enganado. Os Ajoguns não são forças de renovação controlável - são manifestações de princípios caóticos que destruiriam tudo, sem discriminação ou propósito."
+""",
+        "choices": [
+            {
+                "text": "Perguntar se há chances de fazer Adigun mudar de ideia",
+                "next_node": "redemption_possibility"
+            },
+            {
+                "text": "Oferecer-se para recuperar os artefatos",
+                "next_node": "accept_quest"
+            },
+            {
+                "text": "Perguntar como Adigun planeja realizar seu ritual",
+                "next_node": "ritual_details"
+            }
+        ]
+    },
+    
+    "iron_mountains_journey": {
+        "title": "Jornada às Montanhas de Ferro",
+        "text": """Você decide partir imediatamente para as Montanhas de Ferro. Adewale providencia mantimentos para sua jornada e um guia para levá-lo até os pés das montanhas.
+
+A viagem leva dois dias. No primeiro, atravessam vastas planícies de savana, com grama dourada ondulando ao vento. No segundo, a paisagem gradualmente muda para colinas pedregosas que anunciam a proximidade das montanhas.
+
+Seu guia, um homem chamado Babatunde, é quieto mas observador. Ao fim do segundo dia, ele para em uma pequena aldeia aos pés das montanhas. "Daqui em diante você deve seguir sozinho," ele explica. "O Templo de Ogun está no coração das montanhas, e apenas aqueles chamados a enfrentar seu desafio podem encontrar o caminho."
+
+Ele aponta para uma trilha que serpenteia montanha acima. "Siga este caminho até encontrar dois pilares de pedra. A partir dali, deixe que o amuleto o guie - ele responderá à presença da Espada de Ogun."
+
+Antes de partir, Babatunde lhe entrega um pequeno martelo de ferreiro. "Um símbolo de Ogun, o senhor do ferro e da forja. Mostre-o com respeito quando entrar em seu domínio."
+
+Na manhã seguinte, você inicia sua subida pelas Montanhas de Ferro, cujos picos avermelhados parecem tingidos pelo metal que lhes dá o nome.""",
+        "choices": [
+            {
+                "text": "Seguir a trilha em direção aos pilares de pedra",
+                "next_node": "iron_pillars"
+            },
+            {
+                "text": "Tentar usar o amuleto para sentir a direção da Espada",
+                "test": "spiritual",
+                "difficulty": 12,
+                "success_node": "amulet_guidance_success",
+                "failure_node": "amulet_guidance_failure"
+            },
+            {
+                "text": "Observar cuidadosamente os arredores em busca de perigos",
+                "test": "mental",
+                "difficulty": 10,
+                "success_node": "notice_followers",
+                "failure_node": "continue_unaware"
+            }
+        ]
+    },
+    
+    "ask_about_allies": {
+        "title": "Possíveis Aliados",
+        "text": """Você pergunta a Adewale se haverá alguém para ajudá-lo em sua perigosa missão. O sacerdote considera a questão por um momento.
+
+"Não posso deixar o templo desprotegido, especialmente agora que o Machado de Sango é o último artefato restante," ele explica. "Mas há outros que podem auxiliá-lo."
+
+Adewale escreve algumas notas em pequenos pedaços de pergaminho e os sela com cera vermelha. "Em cada local que você visitar, haverá aliados em potencial. Em Ife, próximo às Montanhas de Ferro, procure por Babajide, um ferreiro e devoto de Ogun. Ele conhece bem as montanhas e respeita a Espada."
+
+Ele entrega outro pergaminho. "Próximo ao Lago da Lua, na aldeia de pescadores, procure por Folami. Ela é uma sacerdotisa de Yemoja e sentiu a perturbação quando o Cálice foi roubado."
+
+Um terceiro pergaminho é selado com cuidado especial. "Na floresta dos Sussurros, será mais difícil. Há um eremita chamado Tunde que habita lá. Ele é... peculiar, mas conhece cada árvore e cada espírito daquela floresta. Estas cartas identificarão você como meu emissário."
+
+Adewale coloca uma mão em seu ombro. "Lembre-se: mesmo com aliados, a responsabilidade principal é sua. O Amuleto de Ashe respondeu a você, não a eles."
+""",
+        "choices": [
+            {
+                "text": "Agradecer e partir para as Montanhas de Ferro",
+                "next_node": "iron_mountains_journey"
+            },
+            {
+                "text": "Perguntar se há outros sacerdotes que poderiam ajudar",
+                "next_node": "other_priests"
+            },
+            {
+                "text": "Pedir mais detalhes sobre os perigos específicos de cada local",
+                "next_node": "location_dangers"
+            }
+        ]
+    },
+    
     "end_victory": {
         "title": "A Salvação de Yorùbáland",
         "text": """Com o último artefato recuperado, você retorna triunfante ao Templo de Sango onde os sacerdotes dos quatro Òrìṣà se reuniram. O ritual de selamento é realizado sob a luz da lua cheia.
