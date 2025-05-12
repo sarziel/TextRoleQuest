@@ -605,6 +605,15 @@ def admin_nodes():
 
     return render_template('admin/nodes.html', nodes=all_nodes)
 
+@app.route('/admin/flowchart')
+@admin_required
+def admin_flowchart():
+    """Admin flowchart view"""
+    # Get all nodes
+    all_nodes = {node_id: node_map.get_node(node_id) for node_id in node_map.nodes.keys()}
+    
+    return render_template('admin/flowchart.html', nodes=all_nodes)
+
 @app.route('/admin/node/<node_id>')
 @admin_required
 def admin_node_detail(node_id):
