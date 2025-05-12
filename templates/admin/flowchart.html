@@ -26,6 +26,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0 text-white">Visualização do Fluxo</h5>
             <div class="btn-group">
+                <button class="btn btn-outline-light btn-sm active" onclick="toggleNodes('all')">Todos</button>
                 <button class="btn btn-outline-light btn-sm" onclick="toggleNodes('battle')">Batalhas</button>
                 <button class="btn btn-outline-light btn-sm" onclick="toggleNodes('choice')">Escolhas</button>
                 <button class="btn btn-outline-light btn-sm" onclick="toggleNodes('end')">Finais</button>
@@ -46,7 +47,11 @@
         theme: 'dark',
         flowchart: {
             curve: 'basis',
-            defaultRenderer: 'elk'
+            defaultRenderer: 'elk',
+            htmlLabels: true,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            padding: 10
         }
     });
 
@@ -72,23 +77,30 @@
         let nodes = {{ nodes|tojson|safe }};
         let flowDef = ['flowchart TB'];
         
+        // Definir estilos
+        flowDef.push('    classDef battle fill:#ff6b6b,stroke:#ff6b6b,color:#fff');
+        flowDef.push('    classDef end fill:#51cf66,stroke:#51cf66,color:#fff');
+        flowDef.push('    classDef choice fill:#339af0,stroke:#339af0,color:#fff');
+        flowDef.push('    classDef default fill:#495057,stroke:#495057,color:#fff');
+        
+        // Adicionar nós
         for (let [nodeId, node] of Object.entries(nodes)) {
-            let style = '';
-            if (node.battle) {
-                style = ':::battle';
-            } else if (node.end) {
-                style = ':::end';
-            } else if (node.choices) {
-                style = ':::choice';
-            }
+            let nodeClass = '';
+            let nodeTitle = node.title ? `${nodeId}<br/>${node.title}` : nodeId;
             
-            flowDef.push(`    ${nodeId}["${nodeId}"]${style}`);
+            if (node.battle) nodeClass = ':::battle';
+            else if (node.end) nodeClass = ':::end';
+            else if (node.choices) nodeClass = ':::choice';
             
+            flowDef.push(`    ${nodeId}["${nodeTitle}"]${nodeClass}`);
+            
+            // Adicionar conexões
             if (node.choices) {
                 node.choices.forEach((choice, idx) => {
                     let targetNode = choice.next_node || choice.success_node;
                     if (targetNode) {
-                        flowDef.push(`    ${nodeId} -->|"${choice.text.substring(0, 20)}${choice.text.length > 20 ? '...' : ''}"| ${targetNode}`);
+                        let choiceText = choice.text.substring(0, 20) + (choice.text.length > 20 ? '...' : '');
+                        flowDef.push(`    ${nodeId} -->|"${choiceText}"| ${targetNode}`);
                     }
                     if (choice.failure_node) {
                         flowDef.push(`    ${nodeId} -->|"Falha"| ${choice.failure_node}`);
@@ -106,24 +118,34 @@
             }
         }
         
-        flowDef.push('    classDef battle fill:#ff6b6b,stroke:#ff6b6b');
-        flowDef.push('    classDef end fill:#51cf66,stroke:#51cf66');
-        flowDef.push('    classDef choice fill:#339af0,stroke:#339af0');
-        
         return flowDef.join('\n');
+    }
+
+    function toggleNodes(type) {
+        const diagram = document.querySelector('.mermaid');
+        let nodes = diagram.querySelectorAll('g.node');
+        
+        nodes.forEach(node => {
+            if (type === 'all') {
+                node.style.display = 'block';
+                return;
+            }
+            
+            let nodeClass = node.getAttribute('class');
+            if (type === 'battle' && nodeClass.includes('battle')) {
+                node.style.display = node.style.display === 'none' ? 'block' : 'none';
+            } else if (type === 'choice' && nodeClass.includes('choice')) {
+                node.style.display = node.style.display === 'none' ? 'block' : 'none';
+            } else if (type === 'end' && nodeClass.includes('end')) {
+                node.style.display = node.style.display === 'none' ? 'block' : 'none';
+            }
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         const flowchartDiv = document.getElementById('flowchart');
         flowchartDiv.textContent = generateFlowchart();
     });
-
-    function toggleNodes(type) {
-        const nodes = document.querySelectorAll(`.${type}`);
-        nodes.forEach(node => {
-            node.style.display = node.style.display === 'none' ? 'block' : 'none';
-        });
-    }
 </script>
 
 <style>
@@ -132,10 +154,18 @@
         min-height: 800px;
         transform-origin: top left;
         transition: transform 0.2s;
+        overflow: auto;
     }
     
     .mermaid {
-        overflow: auto;
+        background: #212529;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .btn-group .btn.active {
+        background-color: #fff;
+        color: #212529;
     }
 </style>
 {% endblock %}
