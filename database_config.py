@@ -15,13 +15,7 @@ db = SQLAlchemy()
 
 def init_db_config(app):
     """Initialize database configuration"""
-    database_url = os.environ.get("DATABASE_URL")
-    if database_url:
-        # Modify URL for PostgreSQL
-        database_url = database_url.replace('postgres://', 'postgresql://')
-        if '?' not in database_url:
-            database_url += '?sslmode=prefer'
-
+    database_url = os.environ.get("DATABASE_URL", "sqlite:///rpg.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
