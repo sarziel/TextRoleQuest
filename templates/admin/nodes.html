@@ -43,15 +43,6 @@
     </div>
 </div>
 
-<div class="card shadow mb-4">
-    <div class="card-header bg-dark">
-        <h5 class="mb-0">Mapa de Fluxo dos Nós</h5>
-    </div>
-    <div class="card-body">
-        <div id="nodeFlowchart" class="mermaid"></div>
-    </div>
-</div>
-
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="nodesContainer">
     {% for node_id, node in nodes.items() %}
     <div class="col node-item" 
@@ -67,7 +58,7 @@
                 {% if 'title' in node %}
                 <h6 class="card-subtitle mb-2 text-muted">{{ node.title }}</h6>
                 {% endif %}
-                
+
                 <p class="card-text">
                     {% if 'text' in node %}
                     {{ node.text[:150] }}{% if node.text|length > 150 %}...{% endif %}
@@ -75,20 +66,20 @@
                     <em>Sem texto definido</em>
                     {% endif %}
                 </p>
-                
+
                 <div class="mt-2">
                     {% if 'choices' in node %}
                     <span class="badge bg-primary me-1">{{ node.choices|length }} escolhas</span>
                     {% endif %}
-                    
+
                     {% if 'battle' in node %}
                     <span class="badge bg-danger me-1">Batalha</span>
                     {% endif %}
-                    
+
                     {% if 'end' in node and node.end %}
                     <span class="badge bg-success me-1">Final</span>
                     {% endif %}
-                    
+
                     {% if 'next_node' in node %}
                     <span class="badge bg-info me-1">Nó Sequencial</span>
                     {% endif %}
@@ -105,77 +96,13 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>
-    mermaid.initialize({ 
-        startOnLoad: true,
-        theme: 'dark',
-        flowchart: {
-            curve: 'basis'
-        }
-    });
-
-    // Generate flowchart definition
-    function generateFlowchart() {
-        let nodes = {{ nodes|tojson|safe }};
-        let flowDef = ['flowchart TB'];
-        
-        for (let [nodeId, node] of Object.entries(nodes)) {
-            // Style based on node type
-            let style = '';
-            if (node.battle) {
-                style = ':::battle';
-            } else if (node.end) {
-                style = ':::end';
-            } else if (node.choices) {
-                style = ':::choice';
-            }
-            
-            // Add node
-            flowDef.push(`    ${nodeId}["${nodeId}"]${style}`);
-            
-            // Add connections
-            if (node.choices) {
-                node.choices.forEach((choice, idx) => {
-                    let targetNode = choice.next_node || choice.success_node;
-                    if (targetNode) {
-                        flowDef.push(`    ${nodeId} --> ${targetNode}`);
-                    }
-                    if (choice.failure_node) {
-                        flowDef.push(`    ${nodeId} --> ${choice.failure_node}`);
-                    }
-                });
-            }
-            if (node.next_node) {
-                flowDef.push(`    ${nodeId} --> ${node.next_node}`);
-            }
-            if (node.victory_node) {
-                flowDef.push(`    ${nodeId} --> ${node.victory_node}`);
-            }
-            if (node.defeat_node) {
-                flowDef.push(`    ${nodeId} --> ${node.defeat_node}`);
-            }
-        }
-        
-        // Add styles
-        flowDef.push('    classDef battle fill:#ff6b6b,stroke:#ff6b6b');
-        flowDef.push('    classDef end fill:#51cf66,stroke:#51cf66');
-        flowDef.push('    classDef choice fill:#339af0,stroke:#339af0');
-        
-        return flowDef.join('\n');
-    }
-
-    // Render flowchart
-    document.addEventListener('DOMContentLoaded', function() {
-        const flowchartDiv = document.getElementById('nodeFlowchart');
-        flowchartDiv.textContent = generateFlowchart();
-    });
     // Adicionar ícones Bootstrap via CDN
     const iconLink = document.createElement('link');
     iconLink.rel = 'stylesheet';
     iconLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css';
     document.head.appendChild(iconLink);
-    
+
     document.addEventListener('DOMContentLoaded', function() {
         // Filtro de pesquisa
         const nodeFilter = document.getElementById('nodeFilter');
@@ -183,7 +110,7 @@
         const nodesContainer = document.getElementById('nodesContainer');
         const nodeItems = document.querySelectorAll('.node-item');
         const filterButtons = document.querySelectorAll('.filter-btn');
-        
+
         // Evento de filtro por texto
         filterButton.addEventListener('click', filterNodes);
         nodeFilter.addEventListener('keyup', function(e) {
@@ -191,15 +118,15 @@
                 filterNodes();
             }
         });
-        
+
         function filterNodes() {
             const filterText = nodeFilter.value.toLowerCase();
-            
+
             nodeItems.forEach(item => {
                 const nodeId = item.getAttribute('data-id').toLowerCase();
                 const nodeTitle = item.querySelector('.card-subtitle')?.textContent.toLowerCase() || '';
                 const nodeText = item.querySelector('.card-text')?.textContent.toLowerCase() || '';
-                
+
                 if (nodeId.includes(filterText) || nodeTitle.includes(filterText) || nodeText.includes(filterText)) {
                     item.style.display = '';
                 } else {
@@ -207,16 +134,16 @@
                 }
             });
         }
-        
+
         // Evento de filtro por tipo
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 // Atualiza aparência dos botões
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
-                
+
                 const filterType = this.getAttribute('data-filter');
-                
+
                 nodeItems.forEach(item => {
                     if (filterType === 'all') {
                         item.style.display = '';
