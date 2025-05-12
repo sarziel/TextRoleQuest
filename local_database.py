@@ -1,4 +1,16 @@
 
+from flask_login import UserMixin
+
+class Admin(UserMixin):
+    def __init__(self, username, password_hash, created_at=None, last_login=None):
+        self.username = username
+        self.password_hash = password_hash
+        self.created_at = created_at
+        self.last_login = last_login
+        self.id = username  # usando username como ID
+
+
+
 """
 Local Database Module - Handles all database operations using local JSON files
 """
@@ -56,9 +68,12 @@ def get_admin_by_username(username):
     admins = load_json(ADMIN_FILE, {})
     if username in admins:
         admin_data = admins[username]
-        admin_data['username'] = username
-        admin_data['id'] = username  # Usando username como ID
-        return admin_data
+        return Admin(
+            username=username,
+            password_hash=admin_data['password_hash'],
+            created_at=admin_data.get('created_at'),
+            last_login=admin_data.get('last_login')
+        )
     return None
 
 def update_admin_login(username):
