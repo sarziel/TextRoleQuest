@@ -545,9 +545,9 @@ def admin_login():
 
         admin = db.get_admin_by_username(username)
 
-        if admin and check_password_hash(admin['password_hash'], password):
+        if admin and check_password_hash(admin.password_hash, password):
             login_user(admin)
-            db.update_admin_last_login(admin['id'], datetime.utcnow())
+            db.update_admin_login(admin.username)
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('admin_dashboard'))
         else:
