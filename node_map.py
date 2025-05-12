@@ -1684,6 +1684,53 @@ Historiadores e arqueólogos do futuro encontrarão registros fragmentados de um
         "end": True
     },
 
+    "sacred_grove": {
+        "title": "O Bosque Sagrado",
+        "text": """Você encontra um pequeno bosque onde árvores antigas formam um círculo perfeito. No centro, uma fonte de água cristalina borbulha suavemente. O ar aqui parece vibrar com energia espiritual.
+
+O amuleto em seu pescoço pulsa com mais intensidade, reagindo à energia do local.""",
+        "choices": [
+            {
+                "text": "Beber da água da fonte",
+                "test": "spiritual",
+                "difficulty": 12,
+                "success_node": "sacred_water_blessing",
+                "failure_node": "sacred_water_curse"
+            },
+            {
+                "text": "Meditar no centro do bosque",
+                "next_node": "grove_meditation"
+            },
+            {
+                "text": "Procurar por sinais dos Òrìṣà",
+                "test": "mental",
+                "difficulty": 10,
+                "success_node": "find_orisha_signs",
+                "failure_node": "miss_signs"
+            }
+        ]
+    },
+
+    "grove_meditation": {
+        "title": "Meditação Profunda",
+        "text": """Você se senta no centro do bosque e fecha os olhos. A energia do lugar parece fluir através de você, trazendo visões:
+
+Você vê os quatro templos principais conectados por linhas de energia. Percebe como o roubo dos artefatos criou brechas nessa rede mística. Mas também vê algo mais - um quinto ponto de poder, oculto e esquecido.""",
+        "choices": [
+            {
+                "text": "Tentar entender mais sobre o quinto ponto de poder",
+                "test": "mental",
+                "difficulty": 13,
+                "success_node": "discover_fifth_temple",
+                "failure_node": "meditation_disturbed"
+            },
+            {
+                "text": "Sair da meditação e continuar sua jornada",
+                "next_node": "forest_path"
+            }
+        ]
+    },
+
     "forest_encounter": {
         "title": "O Encontro na Floresta",
         "text": """Enquanto você caminha pela floresta densa, ouve o som de galhos quebrando próximo. Entre as árvores, você vê uma figura encapuzada se movendo rapidamente. Pela forma como se move, parece estar carregando algo pesado.
