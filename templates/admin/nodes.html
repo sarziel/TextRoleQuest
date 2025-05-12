@@ -43,6 +43,15 @@
     </div>
 </div>
 
+<div class="card shadow mb-4">
+    <div class="card-header bg-dark">
+        <h5 class="mb-0">Mapa de Fluxo dos Nós</h5>
+    </div>
+    <div class="card-body">
+        <div id="nodeFlowchart" class="mermaid"></div>
+    </div>
+</div>
+
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="nodesContainer">
     {% for node_id, node in nodes.items() %}
     <div class="col node-item" 
@@ -96,7 +105,71 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>
+    mermaid.initialize({ 
+        startOnLoad: true,
+        theme: 'dark',
+        flowchart: {
+            curve: 'basis'
+        }
+    });
+
+    // Generate flowchart definition
+    function generateFlowchart() {
+        let nodes = {{ nodes|tojson|safe }};
+        let flowDef = ['flowchart TB'];
+        
+        for (let [nodeId, node] of Object.entries(nodes)) {
+            // Style based on node type
+            let style = '';
+            if (node.battle) {
+                style = ':::battle';
+            } else if (node.end) {
+                style = ':::end';
+            } else if (node.choices) {
+                style = ':::choice';
+            }
+            
+            // Add node
+            flowDef.push(`    ${nodeId}["${nodeId}"]${style}`);
+            
+            // Add connections
+            if (node.choices) {
+                node.choices.forEach((choice, idx) => {
+                    let targetNode = choice.next_node || choice.success_node;
+                    if (targetNode) {
+                        flowDef.push(`    ${nodeId} --> ${targetNode}`);
+                    }
+                    if (choice.failure_node) {
+                        flowDef.push(`    ${nodeId} --> ${choice.failure_node}`);
+                    }
+                });
+            }
+            if (node.next_node) {
+                flowDef.push(`    ${nodeId} --> ${node.next_node}`);
+            }
+            if (node.victory_node) {
+                flowDef.push(`    ${nodeId} --> ${node.victory_node}`);
+            }
+            if (node.defeat_node) {
+                flowDef.push(`    ${nodeId} --> ${node.defeat_node}`);
+            }
+        }
+        
+        // Add styles
+        flowDef.push('    classDef battle fill:#ff6b6b,stroke:#ff6b6b');
+        flowDef.push('    classDef end fill:#51cf66,stroke:#51cf66');
+        flowDef.push('    classDef choice fill:#339af0,stroke:#339af0');
+        
+        return flowDef.join('\n');
+    }
+
+    // Render flowchart
+    document.addEventListener('DOMContentLoaded', function() {
+        const flowchartDiv = document.getElementById('nodeFlowchart');
+        flowchartDiv.textContent = generateFlowchart();
+    });
     // Adicionar ícones Bootstrap via CDN
     const iconLink = document.createElement('link');
     iconLink.rel = 'stylesheet';
