@@ -1,0 +1,176 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Detalhes do Nó - Administração{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin_nodes') }}">Nós</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ node_id }}</li>
+                    </ol>
+                </nav>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="card-title">Nó: {{ node_id }}</h2>
+                    <span class="badge fs-6 {% if 'battle' in node %}bg-danger{% elif 'end' in node and node.end %}bg-success{% elif 'choices' in node %}bg-primary{% else %}bg-secondary{% endif %}">
+                        {% if 'battle' in node %}
+                            Batalha
+                        {% elif 'end' in node and node.end %}
+                            Final
+                        {% elif 'choices' in node %}
+                            Escolhas
+                        {% else %}
+                            Sequencial
+                        {% endif %}
+                    </span>
+                </div>
+                <p class="text-muted">Detalhes completos do nó narrativo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-dark">
+                <h5 class="card-title mb-0">Conteúdo do Nó</h5>
+            </div>
+            <div class="card-body">
+                {% if 'title' in node %}
+                <h4>{{ node.title }}</h4>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <h5>Texto</h5>
+                    <div class="p-3 bg-dark rounded">
+                        <p class="text-white" style="white-space: pre-line;">{{ node.text }}</p>
+                    </div>
+                </div>
+                
+                {% if 'choices' in node %}
+                <div class="mt-4">
+                    <h5>Escolhas</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Texto</th>
+                                    <th>Tipo</th>
+                                    <th>Destino</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i, choice in enumerate(node.choices) %}
+                                <tr>
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ choice.text }}</td>
+                                    <td>
+                                        {% if 'test' in choice %}
+                                            <span class="badge bg-warning">Teste de {{ choice.test }} ({{ choice.difficulty }})</span>
+                                        {% else %}
+                                            <span class="badge bg-primary">Direto</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if 'next_node' in choice %}
+                                            <a href="{{ url_for('admin_node_detail', node_id=choice.next_node) }}">{{ choice.next_node }}</a>
+                                        {% elif 'success_node' in choice %}
+                                            Sucesso: <a href="{{ url_for('admin_node_detail', node_id=choice.success_node) }}">{{ choice.success_node }}</a><br>
+                                            Falha: <a href="{{ url_for('admin_node_detail', node_id=choice.failure_node) }}">{{ choice.failure_node }}</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if 'next_node' in node %}
+                <div class="mt-4">
+                    <h5>Próximo Nó</h5>
+                    <p>Este nó leva diretamente para: <a href="{{ url_for('admin_node_detail', node_id=node.next_node) }}">{{ node.next_node }}</a></p>
+                </div>
+                {% endif %}
+                
+                {% if 'battle' in node %}
+                <div class="mt-4">
+                    <h5>Batalha</h5>
+                    <p>Este nó contém uma batalha contra o inimigo: <strong>{{ node.battle }}</strong></p>
+                    <p>
+                        Em caso de vitória: <a href="{{ url_for('admin_node_detail', node_id=node.victory_node) }}">{{ node.victory_node }}</a><br>
+                        Em caso de derrota: <a href="{{ url_for('admin_node_detail', node_id=node.defeat_node) }}">{{ node.defeat_node }}</a>
+                    </p>
+                </div>
+                {% endif %}
+                
+                {% if 'end' in node and node.end %}
+                <div class="mt-4">
+                    <h5>Final</h5>
+                    <p>Este nó representa um final da história.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">Estatísticas</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Visitas:</strong> {{ visit_count }}</p>
+                <p><strong>Personagens que visitaram:</strong> {{ characters|length }}</p>
+            </div>
+        </div>
+        
+        {% if characters %}
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">Personagens Recentes</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for character in characters[:5] %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ character.name }}</strong>
+                            <small class="text-muted d-block">{{ character.character_class }}</small>
+                        </div>
+                        <a href="{{ url_for('admin_character_detail', character_id=character.id) }}" class="btn btn-sm btn-primary">Ver</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                {% if characters|length > 5 %}
+                <div class="text-center mt-3">
+                    <small class="text-muted">Mostrando 5 de {{ characters|length }} personagens</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Helper para enumerate em Jinja2
+    function enumerate(iterable) {
+        let result = [];
+        for (let i = 0; i < iterable.length; i++) {
+            result.push([i, iterable[i]]);
+        }
+        return result;
+    }
+</script>
+{% endblock %}

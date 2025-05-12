@@ -1,0 +1,164 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Nós - Administração{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="card-title">Gerenciamento de Nós</h2>
+                    <span class="badge bg-primary fs-6">Total: {{ nodes|length }}</span>
+                </div>
+                <p class="text-muted">Visualize todos os nós narrativos do jogo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-dark">
+                <h5 class="mb-0">Filtrar Nós</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" id="nodeFilter" class="form-control" placeholder="Digite para filtrar...">
+                    <button class="btn btn-primary" type="button" id="filterButton">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="choice">Com Escolhas</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="battle">Com Batalhas</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="end">Finais</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="nodesContainer">
+    {% for node_id, node in nodes.items() %}
+    <div class="col node-item" 
+         data-id="{{ node_id }}"
+         data-has-choices="{{ 'choices' in node }}"
+         data-has-battle="{{ 'battle' in node }}"
+         data-is-end="{{ 'end' in node and node.end }}">
+        <div class="card h-100 shadow">
+            <div class="card-header {% if 'battle' in node %}bg-danger{% elif 'end' in node and node.end %}bg-success{% elif 'choices' in node %}bg-primary{% else %}bg-secondary{% endif %}">
+                <h5 class="card-title text-white mb-0">{{ node_id }}</h5>
+            </div>
+            <div class="card-body">
+                {% if 'title' in node %}
+                <h6 class="card-subtitle mb-2 text-muted">{{ node.title }}</h6>
+                {% endif %}
+                
+                <p class="card-text">
+                    {% if 'text' in node %}
+                    {{ node.text[:150] }}{% if node.text|length > 150 %}...{% endif %}
+                    {% else %}
+                    <em>Sem texto definido</em>
+                    {% endif %}
+                </p>
+                
+                <div class="mt-2">
+                    {% if 'choices' in node %}
+                    <span class="badge bg-primary me-1">{{ node.choices|length }} escolhas</span>
+                    {% endif %}
+                    
+                    {% if 'battle' in node %}
+                    <span class="badge bg-danger me-1">Batalha</span>
+                    {% endif %}
+                    
+                    {% if 'end' in node and node.end %}
+                    <span class="badge bg-success me-1">Final</span>
+                    {% endif %}
+                    
+                    {% if 'next_node' in node %}
+                    <span class="badge bg-info me-1">Nó Sequencial</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('admin_node_detail', node_id=node_id) }}" class="btn btn-sm btn-primary">Ver Detalhes</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Adicionar ícones Bootstrap via CDN
+    const iconLink = document.createElement('link');
+    iconLink.rel = 'stylesheet';
+    iconLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css';
+    document.head.appendChild(iconLink);
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filtro de pesquisa
+        const nodeFilter = document.getElementById('nodeFilter');
+        const filterButton = document.getElementById('filterButton');
+        const nodesContainer = document.getElementById('nodesContainer');
+        const nodeItems = document.querySelectorAll('.node-item');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        // Evento de filtro por texto
+        filterButton.addEventListener('click', filterNodes);
+        nodeFilter.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                filterNodes();
+            }
+        });
+        
+        function filterNodes() {
+            const filterText = nodeFilter.value.toLowerCase();
+            
+            nodeItems.forEach(item => {
+                const nodeId = item.getAttribute('data-id').toLowerCase();
+                const nodeTitle = item.querySelector('.card-subtitle')?.textContent.toLowerCase() || '';
+                const nodeText = item.querySelector('.card-text')?.textContent.toLowerCase() || '';
+                
+                if (nodeId.includes(filterText) || nodeTitle.includes(filterText) || nodeText.includes(filterText)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Evento de filtro por tipo
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Atualiza aparência dos botões
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterType = this.getAttribute('data-filter');
+                
+                nodeItems.forEach(item => {
+                    if (filterType === 'all') {
+                        item.style.display = '';
+                    } else if (filterType === 'choice' && item.getAttribute('data-has-choices') === 'True') {
+                        item.style.display = '';
+                    } else if (filterType === 'battle' && item.getAttribute('data-has-battle') === 'True') {
+                        item.style.display = '';
+                    } else if (filterType === 'end' && item.getAttribute('data-is-end') === 'True') {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

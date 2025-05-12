@@ -1,0 +1,173 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Personagens - Administração{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="card-title">Gerenciamento de Personagens</h2>
+                    <span class="badge bg-primary fs-6">Total: {{ characters|length }}</span>
+                </div>
+                <p class="text-muted">Visualize todos os personagens criados no jogo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-dark">
+                <h5 class="mb-0">Filtrar Personagens</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" id="characterFilter" class="form-control" placeholder="Digite para filtrar...">
+                    <button class="btn btn-primary" type="button" id="filterButton">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="cientista">Cientistas</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="arqueólogo">Arqueólogos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="charactersTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Classe</th>
+                                <th>Gênero</th>
+                                <th>Vida</th>
+                                <th>Nó atual</th>
+                                <th>Criado em</th>
+                                <th>Jogado em</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for character in characters %}
+                            <tr data-class="{{ character.character_class.lower() }}">
+                                <td>{{ character.id }}</td>
+                                <td>{{ character.name }}</td>
+                                <td>
+                                    <span class="badge {% if character.character_class == 'Cientista' %}bg-info{% else %}bg-warning{% endif %}">
+                                        {{ character.character_class }}
+                                    </span>
+                                </td>
+                                <td>{{ character.gender }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        {% set health_percent = (character.current_health / character.max_health * 100)|int %}
+                                        <div class="progress-bar {% if health_percent > 70 %}bg-success{% elif health_percent > 30 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                             role="progressbar" 
+                                             style="width: {{ health_percent }}%;" 
+                                             aria-valuenow="{{ character.current_health }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="{{ character.max_health }}">
+                                            {{ character.current_health }}/{{ character.max_health }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ character.current_node }}</td>
+                                <td>{{ character.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ character.last_played.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin_character_detail', character_id=character.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Detalhes
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Adicionar ícones Bootstrap via CDN
+    const iconLink = document.createElement('link');
+    iconLink.rel = 'stylesheet';
+    iconLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css';
+    document.head.appendChild(iconLink);
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filtro de pesquisa
+        const characterFilter = document.getElementById('characterFilter');
+        const filterButton = document.getElementById('filterButton');
+        const table = document.getElementById('charactersTable');
+        const rows = table.querySelectorAll('tbody tr');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        // Evento de filtro por texto
+        filterButton.addEventListener('click', filterCharacters);
+        characterFilter.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                filterCharacters();
+            }
+        });
+        
+        function filterCharacters() {
+            const filterText = characterFilter.value.toLowerCase();
+            
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const characterClass = row.cells[2].textContent.toLowerCase();
+                const gender = row.cells[3].textContent.toLowerCase();
+                const node = row.cells[5].textContent.toLowerCase();
+                
+                if (name.includes(filterText) || 
+                    characterClass.includes(filterText) || 
+                    gender.includes(filterText) || 
+                    node.includes(filterText)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // Evento de filtro por classe
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Atualiza aparência dos botões
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterType = this.getAttribute('data-filter');
+                
+                rows.forEach(row => {
+                    if (filterType === 'all') {
+                        row.style.display = '';
+                    } else if (row.getAttribute('data-class') === filterType) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
