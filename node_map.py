@@ -77,6 +77,15 @@ def get_random_node_id(node_type=None):
     else:
         return "start"  # Fallback to start node
 
+def count_nodes():
+    """
+    Count the total number of nodes in the game
+    
+    Returns:
+        int: The total number of nodes
+    """
+    return len(nodes)
+
 # Define the story nodes
 nodes = {
     "start": {
@@ -273,6 +282,58 @@ No centro do círculo, um homem mais velho com vestes elaboradas parece entrar e
         ]
     },
     
+    "forest_path": {
+        "title": "Trilha na Floresta",
+        "text": """Você deixa a aldeia para trás e segue por uma trilha estreita na floresta. O caminho é irregular e parcialmente coberto por vegetação, mas é claramente utilizado com frequência.
+
+Enquanto se afasta do som dos tambores, outros sons da floresta começam a se destacar: o canto de pássaros exóticos, o zumbido de insetos e o ocasional rugido distante de algum animal.
+
+Após cerca de meia hora de caminhada, você chega a uma bifurcação. O caminho à esquerda parece descer em direção a um vale, onde você consegue vislumbrar o brilho de água entre as árvores - provavelmente um rio. O caminho à direita sobe uma colina, e você pode ver o que parece ser uma estrutura de pedra no topo.""",
+        "choices": [
+            {
+                "text": "Seguir o caminho à esquerda, em direção ao rio",
+                "next_node": "river_shrine"
+            },
+            {
+                "text": "Seguir o caminho à direita, em direção à estrutura de pedra",
+                "next_node": "stone_structure"
+            },
+            {
+                "text": "Esperar e observar a área em busca de sinais de perigo",
+                "test": "mental",
+                "difficulty": 10,
+                "success_node": "path_observation_success",
+                "failure_node": "path_observation_failure"
+            }
+        ]
+    },
+    
+    "river_shrine": {
+        "title": "O Santuário do Rio",
+        "text": """Você segue a trilha que desce em direção ao vale. À medida que se aproxima, o som da água corrente se torna mais claro. Finalmente, a floresta se abre e revela um rio largo e calmo.
+
+Nas margens do rio, uma pequena estrutura chamou sua atenção. É um santuário dedicado a Yemoja, a deusa dos rios e oceanos. Pequenas oferendas - flores, conchas e pedras coloridas - foram cuidadosamente dispostas ao redor de uma estátua feminina que parece emergir das águas.
+
+O local tem uma atmosfera serena, e você sente uma presença reconfortante, como se estivesse sendo observado por olhos benevolentes.""",
+        "choices": [
+            {
+                "text": "Fazer uma oferenda improvisada a Yemoja",
+                "next_node": "yemoja_offering"
+            },
+            {
+                "text": "Examinar os símbolos e artefatos no santuário",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "yemoja_symbols_success",
+                "failure_node": "yemoja_symbols_failure"
+            },
+            {
+                "text": "Beber água do rio para matar a sede",
+                "next_node": "river_water"
+            }
+        ]
+    },
+    
     "stone_structure": {
         "title": "O Templo Antigo",
         "text": """Seguindo o caminho à direita, você sobe pela colina. A vegetação vai ficando mais esparsa, e logo você avista claramente a estrutura de pedra.
@@ -283,7 +344,7 @@ Ao se aproximar da entrada, você nota uma estátua de pedra representando uma f
         "choices": [
             {
                 "text": "Entrar no templo para explorar",
-                "next_node": "enter_temple"
+                "next_node": "temple_interior"
             },
             {
                 "text": "Examinar os entalhes nas colunas mais de perto",
@@ -295,6 +356,32 @@ Ao se aproximar da entrada, você nota uma estátua de pedra representando uma f
             {
                 "text": "Voltar para a bifurcação e seguir outro caminho",
                 "next_node": "forest_path"
+            }
+        ]
+    },
+    
+    "temple_interior": {
+        "title": "Interior do Templo",
+        "text": """Você entra no templo com cautela. O interior é fresco e parcialmente iluminado por aberturas estratégicas no teto que criam feixes de luz natural. O ar cheira a incenso e ervas secas.
+
+As paredes internas estão cobertas de relevos e pinturas representando Sango e seus feitos: controlando tempestades, empunhando seu machado duplo, e julgando disputas com sua justiça severa mas justa.
+
+No centro da sala principal, um altar de pedra polida ostenta oferendas: frutas, pequenas esculturas de madeira e tigelas com substâncias desconhecidas. Acima do altar, preso à parede, está um objeto que imediatamente atrai sua atenção: um pequeno machado cerimonial de bronze com inscrições místicas.""",
+        "choices": [
+            {
+                "text": "Examinar o machado cerimonial mais de perto",
+                "next_node": "examine_axe"
+            },
+            {
+                "text": "Estudar os relevos e pinturas nas paredes",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "temple_paintings_insight",
+                "failure_node": "temple_paintings_confusion"
+            },
+            {
+                "text": "Fazer uma pequena oferenda no altar",
+                "next_node": "temple_offering"
             }
         ]
     },
@@ -322,22 +409,6 @@ Anos se passam, e sua reputação cresce. Quando o velho rei falece sem herdeiro
 Sob seu reinado, Yorùbáland prospera. Você introduz avanços médicos e agrícolas que salvam inúmeras vidas. Sua ligação com os Òrìṣà garante boas colheitas e paz nas fronteiras.
 
 Os historiadores do futuro, séculos depois, encontrarão referências a um governante misterioso e poderoso, que veio de terras distantes e trouxe uma era de ouro para a civilização Yorùbá - sem nunca saber que estavam falando de você.""",
-        "end": True
-    },
-    
-    "end_orisha": {
-        "title": "Ascensão Divina",
-        "text": """Ao final de sua jornada, tendo utilizado repetidamente o Amuleto de Ashe e fortalecido sua conexão com o mundo espiritual, você percebe que seu vínculo com seu próprio tempo está quase completamente dissolvido.
-
-Durante o ritual final no templo sagrado, algo extraordinário acontece. Enquanto os quatro artefatos são reunidos e seu poder combinado, uma luz intensa emana de seu corpo.
-
-"O amuleto e o portador se tornaram um," declara Babajide em espanto. "Os Òrìṣà o escolheram."
-
-Você sente seu corpo físico se dissolvendo, transformando-se em pura energia. Sua consciência se expande, abrangendo não apenas o presente, mas também o passado e o futuro. Você se torna uma presença, uma força - um novo Òrìṣà.
-
-Os Yorùbá criam um novo templo em sua honra, onde gerações futuras farão oferendas e buscarão orientação do Òrìṣà estrangeiro que transcendeu o tempo para proteger o equilíbrio entre os mundos.
-
-Sua essência continua a velar por ambos os tempos, garantindo a continuidade da harmonia entre o mundo físico e o espiritual.""",
         "end": True
     },
     

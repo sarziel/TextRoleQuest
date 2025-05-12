@@ -5,11 +5,49 @@ A Flask web interface for the text-based RPG
 
 import os
 import random
+import json
+from datetime import datetime
+from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 # Create Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Import and initialize database
+from models import db, Admin, Character, NodeVisit
+db.init_app(app)
+
+# Setup Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'admin_login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Admin.query.get(int(user_id))
+
+# Create admin user if it doesn't exist
+with app.app_context():
+    db.create_all()
+    if not Admin.query.filter_by(username='admin').first():
+        admin = Admin(username='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+
+# Admin authentication decorator
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.username != 'admin':
+            flash('Acesso negado. Você precisa fazer login como administrador.', 'danger')
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
@@ -195,7 +233,7 @@ def load_game():
     # Check if save exists
     if not save_load.save_exists():
         flash('Nenhum jogo salvo encontrado.', 'warning')
-        return redirect(url_for('play'))
+        return redirect(url_for('play_game'))
     
     # Load game
     loaded_game = save_load.load_game()
@@ -222,7 +260,7 @@ def load_game():
         return redirect(url_for('game'))
     else:
         flash('Erro ao carregar o jogo.', 'danger')
-        return redirect(url_for('play'))
+        return redirect(url_for('play_game'))
         
 @app.route('/battle_start')
 def battle_start():
@@ -440,6 +478,159 @@ def battle_end():
             session.pop(key)
     
     return redirect(url_for('game'))
+
+# ==============================================================================
+# Admin routes
+# ==============================================================================
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """Admin login page"""
+    if current_user.is_authenticated:
+        return redirect(url_for('admin_dashboard'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        admin = Admin.query.filter_by(username=username).first()
+        
+        if admin and admin.check_password(password):
+            login_user(admin)
+            admin.last_login = datetime.utcnow()
+            db.session.commit()
+            flash('Login realizado com sucesso!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Usuário ou senha inválidos.', 'danger')
+    
+    return render_template('admin/login.html')
+
+@app.route('/admin/logout')
+@login_required
+def admin_logout():
+    """Admin logout"""
+    logout_user()
+    flash('Você saiu do sistema.', 'info')
+    return redirect(url_for('admin_login'))
+
+@app.route('/admin')
+@admin_required
+def admin_dashboard():
+    """Admin dashboard"""
+    # Count nodes
+    node_count = node_map.count_nodes()
+    
+    # Count characters
+    character_count = Character.query.count()
+    
+    # Count node visits
+    node_visit_count = NodeVisit.query.count()
+    
+    # Get most visited nodes
+    top_nodes = db.session.query(
+        NodeVisit.node_id, 
+        db.func.count(NodeVisit.id).label('visit_count')
+    ).group_by(NodeVisit.node_id).order_by(db.desc('visit_count')).limit(5).all()
+    
+    # Get recent characters
+    recent_characters = Character.query.order_by(Character.created_at.desc()).limit(5).all()
+    
+    return render_template(
+        'admin/dashboard.html',
+        node_count=node_count,
+        character_count=character_count,
+        node_visit_count=node_visit_count,
+        top_nodes=top_nodes,
+        recent_characters=recent_characters
+    )
+
+@app.route('/admin/nodes')
+@admin_required
+def admin_nodes():
+    """Admin node list"""
+    # Get all nodes
+    all_nodes = {node_id: node_map.get_node(node_id) for node_id in node_map.nodes.keys()}
+    
+    return render_template('admin/nodes.html', nodes=all_nodes)
+
+@app.route('/admin/node/<node_id>')
+@admin_required
+def admin_node_detail(node_id):
+    """Admin node detail"""
+    node = node_map.get_node(node_id)
+    
+    if 'text' not in node:
+        flash('Nó não encontrado.', 'danger')
+        return redirect(url_for('admin_nodes'))
+    
+    # Get node visit count
+    visit_count = NodeVisit.query.filter_by(node_id=node_id).count()
+    
+    # Get characters that visited this node
+    characters = db.session.query(Character).join(NodeVisit).filter(
+        NodeVisit.node_id == node_id
+    ).distinct().all()
+    
+    return render_template(
+        'admin/node_detail.html',
+        node_id=node_id,
+        node=node,
+        visit_count=visit_count,
+        characters=characters
+    )
+
+@app.route('/admin/characters')
+@admin_required
+def admin_characters():
+    """Admin character list"""
+    characters = Character.query.order_by(Character.created_at.desc()).all()
+    return render_template('admin/characters.html', characters=characters)
+
+@app.route('/admin/character/<int:character_id>')
+@admin_required
+def admin_character_detail(character_id):
+    """Admin character detail"""
+    character = Character.query.get_or_404(character_id)
+    
+    # Get visited nodes
+    visited_nodes = NodeVisit.query.filter_by(character_id=character_id).order_by(
+        NodeVisit.visited_at.desc()
+    ).all()
+    
+    return render_template(
+        'admin/character_detail.html',
+        character=character,
+        visited_nodes=visited_nodes,
+        inventory=json.loads(character.inventory) if character.inventory else [],
+        abilities=json.loads(character.special_abilities) if character.special_abilities else []
+    )
+
+# Utility function to record node visits
+def record_node_visit(node_id):
+    """Record a node visit in the database"""
+    # Check if we have a character in the session
+    if 'player' in session and 'id' in session['player']:
+        character_id = session['player']['id']
+        
+        # Create a node visit record
+        visit = NodeVisit(node_id=node_id, character_id=character_id)
+        db.session.add(visit)
+        db.session.commit()
+
+# Update the game route to record node visits
+original_game = app.view_functions['game']
+
+def game_with_tracking():
+    """Wrapper for the game route that records node visits"""
+    # Record the node visit
+    if 'current_node' in session:
+        record_node_visit(session['current_node'])
+    
+    # Call the original route
+    return original_game()
+
+app.view_functions['game'] = game_with_tracking
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
