@@ -82,13 +82,16 @@
         flowDef.push('    classDef choice fill:#339af0,stroke:#339af0,color:#fff');
         flowDef.push('    classDef default fill:#495057,stroke:#495057,color:#fff');
         
+        function escapeNodeText(text) {
+            return text.replace(/[<>"]/g, '_');
+        }
+        
         // Adicionar nós
         for (let [nodeId, node] of Object.entries(nodes)) {
             let nodeClass = '';
             let safeNodeId = nodeId.replace(/[^a-zA-Z0-9]/g, '_');
-            let nodeTitle = node.title ? 
-                `${safeNodeId}["${nodeId.replace(/"/g, "'")}<br>${node.title.replace(/"/g, "'")}"]` : 
-                `${safeNodeId}["${nodeId.replace(/"/g, "'")}"]`;
+            let displayTitle = node.title ? `${nodeId}\\n${escapeNodeText(node.title)}` : nodeId;
+            let nodeTitle = `${safeNodeId}["${displayTitle}"]`;
             
             if (node.battle) nodeClass = ':::battle';
             else if (node.end) nodeClass = ':::end';
@@ -102,9 +105,9 @@
                     let targetNode = choice.next_node || choice.success_node;
                     if (targetNode) {
                         let safeTargetId = targetNode.replace(/[^a-zA-Z0-9]/g, '_');
-                        let choiceText = choice.text.substring(0, 20).replace(/"/g, "'") + 
+                        let choiceText = escapeNodeText(choice.text.substring(0, 20)) + 
                             (choice.text.length > 20 ? '...' : '');
-                        flowDef.push(`    ${safeNodeId} -->|"${choiceText}"| ${safeTargetId}`);
+                        flowDef.push(`    ${safeNodeId} -->|${choiceText}| ${safeTargetId}`);
                     }
                     if (choice.failure_node) {
                         let safeFailureId = choice.failure_node.replace(/[^a-zA-Z0-9]/g, '_');
