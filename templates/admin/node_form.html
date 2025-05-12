@@ -18,6 +18,15 @@
                     {% endif %}
                     
                     <div class="mb-3">
+                        <label for="node_type" class="form-label">Tipo de Nó</label>
+                        <select class="form-select" id="node_type" name="node_type">
+                            <option value="normal" {% if not node.battle and not node.next_node %}selected{% endif %}>Nó com Escolhas</option>
+                            <option value="sequential" {% if node.next_node %}selected{% endif %}>Nó Sequencial</option>
+                            <option value="battle" {% if node.battle %}selected{% endif %}>Nó de Batalha</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="title" class="form-label">Título</label>
                         <input type="text" class="form-control" id="title" name="title" value="{{ node.title if node else '' }}">
                     </div>
@@ -27,12 +36,30 @@
                         <textarea class="form-control" id="text" name="text" rows="5" required>{{ node.text if node else '' }}</textarea>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="next_node" class="form-label">Próximo Nó (se não houver escolhas)</label>
+                    <!-- Campos para nó sequencial -->
+                    <div class="mb-3 node-field sequential-field" style="display: none;">
+                        <label for="next_node" class="form-label">Próximo Nó</label>
                         <input type="text" class="form-control" id="next_node" name="next_node" value="{{ node.next_node if node else '' }}">
                     </div>
 
-                    <div class="mb-3">
+                    <!-- Campos para nó de batalha -->
+                    <div class="node-field battle-field" style="display: none;">
+                        <div class="mb-3">
+                            <label for="battle_enemy" class="form-label">ID do Inimigo</label>
+                            <input type="text" class="form-control" id="battle_enemy" name="battle" value="{{ node.battle if node else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="victory_node" class="form-label">Nó de Vitória</label>
+                            <input type="text" class="form-control" id="victory_node" name="victory_node" value="{{ node.victory_node if node else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="defeat_node" class="form-label">Nó de Derrota</label>
+                            <input type="text" class="form-control" id="defeat_node" name="defeat_node" value="{{ node.defeat_node if node else '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Campos para nó com escolhas -->
+                    <div class="mb-3 node-field normal-field" style="display: none;">
                         <label class="form-label">Escolhas</label>
                         <div id="choices-container">
                             {% if node and node.choices %}
@@ -65,6 +92,21 @@
 </div>
 
 <script>
+// Função para mostrar/esconder campos baseado no tipo de nó
+function updateNodeFields() {
+    const nodeType = document.getElementById('node_type').value;
+    document.querySelectorAll('.node-field').forEach(field => {
+        field.style.display = 'none';
+    });
+    document.querySelector(`.${nodeType}-field`).style.display = 'block';
+}
+
+// Inicializar campos ao carregar
+document.addEventListener('DOMContentLoaded', function() {
+    updateNodeFields();
+    document.getElementById('node_type').addEventListener('change', updateNodeFields);
+});
+
 document.getElementById('add-choice').addEventListener('click', function() {
     const container = document.getElementById('choices-container');
     const newChoice = document.createElement('div');
