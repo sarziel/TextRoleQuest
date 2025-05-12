@@ -43,13 +43,23 @@ def ensure_data_dir():
     """Ensure data directory exists"""
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
-    for file_name in [ADMIN_FILE, CHARACTER_FILE, NODE_VISITS_FILE]:
+    
+    try:
+        with open(ADMIN_FILE, 'r', encoding='utf-8') as f:
+            admins = json.load(f)
+    except:
+        admins = {"admin": {
+            "username": "admin",
+            "password_hash": "pbkdf2:sha256:600000$X5ksUUrEU8aAUh70$694f77f42c0caddb094cd49b3bf72bc75e0eda9f2d67f417f318afbf8c91daad",
+            "created_at": datetime.now().isoformat()
+        }}
+        with open(ADMIN_FILE, 'w', encoding='utf-8') as f:
+            json.dump(admins, f, indent=2)
+
+    for file_name in [CHARACTER_FILE, NODE_VISITS_FILE]:
         if not os.path.exists(file_name):
-            try:
-                with open(file_name, 'w', encoding='utf-8') as f:
-                    json.dump({} if file_name == ADMIN_FILE else [], f, indent=2)
-            except Exception as e:
-                print(f"Error creating {file_name}: {e}")
+            with open(file_name, 'w', encoding='utf-8') as f:
+                json.dump([], f, indent=2)
 
 def load_json(file_path, default=None):
     """Load JSON data from file"""
