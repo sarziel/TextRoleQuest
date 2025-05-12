@@ -127,6 +127,45 @@ def get_all_characters():
     """Get all characters"""
     return load_json(CHARACTER_FILE, [])
 
+def count_characters():
+    """Count total number of characters"""
+    characters = load_json(CHARACTER_FILE, [])
+    return len(characters)
+
+def count_node_visits():
+    """Count total number of node visits"""
+    visits = load_json(NODE_VISITS_FILE, [])
+    return len(visits)
+
+def count_node_visits_for_node(node_id):
+    """Count visits for a specific node"""
+    visits = load_json(NODE_VISITS_FILE, [])
+    return len([v for v in visits if v['node_id'] == node_id])
+
+def get_top_visited_nodes(limit=5):
+    """Get most visited nodes"""
+    visits = load_json(NODE_VISITS_FILE, [])
+    node_counts = {}
+    for visit in visits:
+        node_id = visit['node_id']
+        node_counts[node_id] = node_counts.get(node_id, 0) + 1
+    
+    sorted_nodes = sorted(node_counts.items(), key=lambda x: x[1], reverse=True)
+    return [{'node_id': node_id, 'visit_count': count} for node_id, count in sorted_nodes[:limit]]
+
+def get_recent_characters(limit=5):
+    """Get most recently created characters"""
+    characters = load_json(CHARACTER_FILE, [])
+    sorted_chars = sorted(characters, key=lambda x: x.get('created_at', ''), reverse=True)
+    return sorted_chars[:limit]
+
+def get_characters_that_visited_node(node_id):
+    """Get characters that visited a specific node"""
+    visits = load_json(NODE_VISITS_FILE, [])
+    char_ids = set(v['character_id'] for v in visits if v['node_id'] == node_id and v['character_id'] is not None)
+    characters = load_json(CHARACTER_FILE, [])
+    return [c for c in characters if c['id'] in char_ids]
+
 # Node visit operations
 def record_node_visit(node_id, character_id=None):
     """Record a visit to a story node"""
