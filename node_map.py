@@ -168,7 +168,7 @@ def save_nodes():
 
 # Define the story nodes
 nodes = {
-    "1": {
+    "12345": {
         "title": "O Portal Ancestral",
         "text": """Você é transportado em um redemoinho de luz e cor. Quando a visão retorna, você se encontra em um cenário completamente diferente.
 
@@ -196,7 +196,7 @@ Por um momento, você se pergunta se está sonhando.""",
         ]
     },
 
-    "examine_amulet": {
+    "54321": {
         "title": "O Amuleto Misterioso",
         "text": """Você segura o amuleto com cuidado, examinando-o de perto. É feito de um metal dourado que não consegue identificar, com intrincados símbolos gravados em sua superfície.
 
@@ -225,7 +225,7 @@ Enquanto você estuda o objeto, a pedra emite um brilho mais intenso, e você se
         ]
     },
 
-    "amulet_vision": {
+    "98765": {
         "title": "Visões do Passado",
         "text": """Ao se concentrar na pedra azul, sua visão fica turva e você é inundado por imagens que fluem rapidamente:
 
