@@ -76,7 +76,12 @@
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Próximo Nó</label>
-                                        <input type="text" class="form-control" name="choice_next_node[]" value="{{ choice.next_node if 'next_node' in choice else '' }}">
+                                        <select class="form-select" name="choice_next_node[]">
+                                            <option value="">Selecione um nó</option>
+                                            {% for node_id, node_data in nodes.items() %}
+                                                <option value="{{ node_id }}">{{ node_id }} - {{ node_data.title }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                     <button type="button" class="btn btn-danger btn-sm remove-choice">Remover Escolha</button>
                                 </div>
@@ -102,7 +107,7 @@ function updateNodeId() {
     const nodeType = document.getElementById('node_type').value;
     const nodeIdInput = document.getElementById('node_id');
     let prefix;
-    
+
     switch(nodeType) {
         case 'normal':
             prefix = '01';
@@ -117,7 +122,7 @@ function updateNodeId() {
             prefix = '04';
             break;
     }
-    
+
     // Gera número sequencial aleatório de 3 dígitos
     const randomNum = Math.floor(Math.random() * 999).toString().padStart(3, '0');
     nodeIdInput.value = `${prefix}_${randomNum}`;
@@ -149,7 +154,12 @@ document.getElementById('add-choice').addEventListener('click', function() {
         </div>
         <div class="mb-2">
             <label class="form-label">Próximo Nó</label>
-            <input type="text" class="form-control" name="choice_next_node[]">
+            <select class="form-select" name="choice_next_node[]">
+                <option value="">Selecione um nó</option>
+                {% for node_id, node_data in nodes.items() %}
+                    <option value="{{ node_id }}">{{ node_id }} - {{ node_data.title }}</option>
+                {% endfor %}
+            </select>
         </div>
         <button type="button" class="btn btn-danger btn-sm remove-choice">Remover Escolha</button>
     `;

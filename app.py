@@ -684,7 +684,7 @@ def admin_create_node():
         flash('Nó criado com sucesso!', 'success')
         return redirect(url_for('admin_node_detail', node_id=node_id))
         
-    return render_template('admin/node_form.html', node=None, action='create')
+    return render_template('admin/node_form.html', node=None, action='create', nodes=node_map.nodes)
 
 @app.route('/admin/node/<node_id>/edit', methods=['GET', 'POST'])
 @admin_required
@@ -724,7 +724,7 @@ def admin_edit_node(node_id):
         flash('Nó atualizado com sucesso!', 'success')
         return redirect(url_for('admin_node_detail', node_id=node_id))
         
-    return render_template('admin/node_form.html', node=node, node_id=node_id, action='edit')
+    return render_template('admin/node_form.html', node=node, node_id=node_id, action='edit', nodes=node_map.nodes)
 
 @app.route('/admin/node/<node_id>/delete', methods=['POST'])
 @admin_required
