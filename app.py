@@ -10,33 +10,16 @@ from datetime import datetime
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from database_config import db, init_db_config, Admin, Character, NodeVisit
+from database import create_admin, get_admin, create_character, get_character
+from database import update_character, record_node_visit, get_node_visits, get_character_visits, get_all_characters
 
 # Create Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
-database_url = os.environ.get("DATABASE_URL")
-if database_url:
-    # Modificar URL para PostgreSQL
-    database_url = database_url.replace('postgres://', 'postgresql://')
-    # Desativar SSL para evitar problemas de conexão
-    if '?' not in database_url:
-        database_url += '?sslmode=prefer'
 
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,    # verifica a conexão antes de usá-la
-    "pool_recycle": 280,      # recicla conexões a cada ~4.5 minutos
-    "pool_timeout": 10,       # tempo de espera para obter uma conexão 
-    "max_overflow": 15        # conexões extras além do tamanho do pool
-}
-
-# Import database models and initialize
-from models import db, Admin, Character, NodeVisit
-from database import init_db, create_admin, get_admin, create_character, get_character
-from database import update_character, record_node_visit, get_node_visits, get_character_visits, get_all_characters
-
-init_db(app)
+# Initialize database
+init_db_config(app)
 
 # Setup Flask-Login
 login_manager = LoginManager()

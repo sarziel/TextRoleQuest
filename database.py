@@ -4,11 +4,10 @@ Database Module - Handles all database operations for the game
 """
 
 from datetime import datetime
-from models import db, Admin, Character, NodeVisit
+from database_config import db, Admin, Character, NodeVisit
 
 def init_db(app):
     """Initialize database with app context"""
-    db.init_app(app)
     with app.app_context():
         db.create_all()
 
