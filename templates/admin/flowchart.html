@@ -54,6 +54,7 @@
             this.y = y;
             this.width = 180;
             this.height = 90;
+            this.connections = [];
         }
 
         draw(ctx) {
@@ -101,9 +102,16 @@
     }
 
     function drawArrow(ctx, fromX, fromY, toX, toY, text) {
+        // Calculate control points for curved lines
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const midX = fromX + dx * 0.5;
+        const midY = fromY + dy * 0.5;
+        
+        // Draw curved arrow
         ctx.beginPath();
         ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
+        ctx.quadraticCurveTo(midX, fromY, toX, toY);
         ctx.stroke();
 
         // Arrow head
@@ -132,16 +140,18 @@
         canvas = document.getElementById('flowchart');
         ctx = canvas.getContext('2d');
 
-        // Create node objects
+        // Create node objects with better spacing
         const nodeObjects = [];
         let x = 50, y = 50;
+        let maxNodesPerRow = 4;
+        
         Object.entries(nodes).forEach(([id, data], index) => {
-            if (index > 0 && index % 5 === 0) {
-                y += 150;
+            if (index > 0 && index % maxNodesPerRow === 0) {
+                y += 200;
                 x = 50;
             }
             nodeObjects.push(new Node(id, data, x, y));
-            x += 200;
+            x += 250;
         });
 
         function render() {
