@@ -43,19 +43,31 @@ def ensure_data_dir():
     """Ensure data directory exists"""
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
+    for file_name in [ADMIN_FILE, CHARACTER_FILE, NODE_VISITS_FILE]:
+        if not os.path.exists(file_name):
+            save_json(file_name, {} if file_name == ADMIN_FILE else [])
 
 def load_json(file_path, default=None):
     """Load JSON data from file"""
-    if not os.path.exists(file_path):
+    try:
+        if not os.path.exists(file_path):
+            return default if default is not None else {}
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        print(f"Error reading {file_path}, returning default value")
         return default if default is not None else {}
-    with open(file_path, 'r') as f:
-        return json.load(f)
 
 def save_json(file_path, data):
     """Save data to JSON file"""
     ensure_data_dir()
-    with open(file_path, 'w') as f:
-        json.dump(data, f, indent=2, default=str)
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, default=str)
+        return True
+    except Exception as e:
+        print(f"Error saving to {file_path}: {e}")
+        return False
 
 # Admin operations
 def create_admin(admin_data):
