@@ -7,8 +7,13 @@ class Admin(UserMixin):
         self.password_hash = password_hash
         self.created_at = created_at
         self.last_login = last_login
-        self.id = username  # usando username como ID
+        self.id = username
         self._is_authenticated = True
+        self._is_active = True
+        self._is_anonymous = False
+
+    def get_id(self):
+        return str(self.id)
         
     @property
     def is_authenticated(self):
@@ -89,8 +94,10 @@ def update_admin_login(username):
     """Update admin's last login"""
     admins = load_json(ADMIN_FILE, {})
     if username in admins:
-        admins[username]['last_login'] = datetime.utcnow()
+        admins[username]['last_login'] = datetime.utcnow().isoformat()
         save_json(ADMIN_FILE, admins)
+        return True
+    return False
 
 # Character operations
 def create_character(data):

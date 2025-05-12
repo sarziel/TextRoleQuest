@@ -542,16 +542,21 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        
+        if not username or not password:
+            flash('Por favor preencha todos os campos.', 'danger')
+            return render_template('admin/login.html')
 
         admin = db.get_admin_by_username(username)
-
+        
         if admin and check_password_hash(admin.password_hash, password):
             login_user(admin)
-            db.update_admin_login(admin.username)
-            flash('Login realizado com sucesso!', 'success')
-            return redirect(url_for('admin_dashboard'))
-        else:
-            flash('Usuário ou senha inválidos.', 'danger')
+            if db.update_admin_login(admin.username):
+                flash('Login realizado com sucesso!', 'success')
+                return redirect(url_for('admin_dashboard'))
+        
+        flash('Usuário ou senha inválidos.', 'danger')
+        return render_template('admin/login.html')
 
     return render_template('admin/login.html')
 
