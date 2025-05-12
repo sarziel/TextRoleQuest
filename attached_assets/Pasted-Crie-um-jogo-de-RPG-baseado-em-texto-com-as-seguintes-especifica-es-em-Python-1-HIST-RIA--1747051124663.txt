@@ -1,0 +1,61 @@
+Crie um jogo de RPG baseado em texto com as seguintes especificações, em Python:
+
+1. 🧭 HISTÓRIA:
+   - O jogo se passa em *Yorùbáland*, África, por volta de 400 a.C.
+   - O jogador é um arqueólogo ou cientista (homem ou mulher) que encontra um portal secreto durante uma escavação com um amigo e acaba atravessando para um mundo ancestral onde os *Òrìṣà* existem e interferem nos eventos.
+   - O jogo deve conter **1000 nós interligados**, com até 3 escolhas por fase.
+   - A cada escolha, uma **rolagem de dado (d20)** e os **atributos** do personagem afetam o resultado.
+
+2. 🧑🏽‍🚀 PERSONAGENS:
+   - Quatro opções: Cientista (homem/mulher), Arqueólogo (homem/mulher)
+   - Cada um inicia com valores diferentes nos atributos: *Mental*, *Físico*, *Espiritual*
+
+3. 📊 ATRIBUTOS:
+   - **Mental**: conhecimento, lógica, resolução de enigmas
+   - **Físico**: força, resistência, agilidade
+   - **Espiritual**: fé, intuição, ligação com os Òrìṣà
+
+4. 🧠 SISTEMA:
+   - Cada decisão rola um dado (1d20) e soma ao atributo principal requerido.
+   - Pontuação define se o personagem ganha vantagem, sofre penalidade ou avança normalmente.
+   - Sistema de pontuação pode aumentar ou reduzir atributos com base nas decisões e desafios enfrentados.
+
+5. 🕹️ SISTEMA DE COMANDOS:
+   - As opções devem ser numeradas (1, 2, 3)
+   - O jogador pode digitar:
+     - `status` → Ver seus atributos e progresso
+     - `ajuda` → Ver instruções
+     - `salvar` → Força um salvamento do progresso
+   - Implementar **autosave a cada 5 rodadas/jogadas**, armazenando em arquivo JSON local.
+
+6. ⚔️ SISTEMA DE BATALHAS:
+   - Encontros aleatórios com guardiões, animais sagrados ou seres espirituais
+   - Jogador escolhe entre "atacar", "defender" ou "usar espiritualidade"
+   - Batalha baseada em:
+     - Rolagem de dado (1d20)
+     - Comparação de atributo (Físico ou Espiritual)
+     - Resultado determina vitória, dano ou fuga
+
+7. 🎯 OBJETIVOS E FINAIS:
+   - Final 1: Morte trágica por falha crítica ou acúmulo de erros
+   - Final 2: Torna-se imperador de um reino antigo yorùbá
+   - Final 3: Ascende como um *Òrìṣà* (exige alto espiritual, boas decisões e vitórias)
+
+8. ✨ ELEMENTOS VISUAIS:
+   - Interface com uso de `rich` ou `colorama` para deixar o terminal colorido e bonito
+   - Títulos, separadores, mensagens de batalha, falas dos personagens e dos Òrìṣà devem ter estilos visuais diferentes
+
+9. 🔁 EXTRAS:
+   - Inserir *palavras em yorùbá* com tradução entre parênteses, por exemplo:
+     - "*Ẹ kú ojúmẹ́ta* (bom dia a todos)" — sem tradução se estiver em diálogo comum
+   - Diálogos devem iniciar com travessão (—), imitando um romance
+   - As falas dos Òrìṣà devem ter um tom elevado, respeitoso, ancestral
+
+10. 💾 ORGANIZAÇÃO DE CÓDIGO:
+    - Separar o jogo em módulos:
+      - `main.py`: loop principal e narrativa
+      - `player.py`: criação e atributos do jogador
+      - `battle.py`: sistema de batalha
+      - `save_load.py`: salvar/carregar progresso
+      - `node_map.py`: estrutura de nós e caminhos
+
