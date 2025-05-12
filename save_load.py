@@ -62,7 +62,7 @@ def load_game():
     Load a game from the save file
     
     Returns:
-        tuple: (player, current_node, turn_counter) or None if loading failed
+        dict: Dictionary containing player data and game state
     """
     try:
         # Check if save file exists
@@ -73,34 +73,27 @@ def load_game():
         with open(SAVE_FILE, 'r') as f:
             save_data = json.load(f)
         
-        # Extract player data
+        # Extract player data and game state
         player_data = save_data["player"]
-        
-        # Create a new player object
-        player = Player(
-            player_data["name"],
-            player_data["class"],
-            player_data["gender"]
-        )
-        
-        # Restore player attributes
-        player.mental = player_data["mental"]
-        player.physical = player_data["physical"]
-        player.spiritual = player_data["spiritual"]
-        player.max_health = player_data["max_health"]
-        player.current_health = player_data["current_health"]
-        player.inventory = player_data["inventory"]
-        player.special_abilities = player_data["special_abilities"]
-        player.choices_made = player_data["choices_made"]
-        player.orisha_favor = player_data["orisha_favor"]
-        player.achievements = set(player_data["achievements"])
-        
-        # Extract game state
         game_state = save_data["game_state"]
-        current_node = game_state["current_node"]
-        turn_counter = game_state["turn_counter"]
         
-        return player, current_node, turn_counter
+        # Return the data as a dictionary
+        return {
+            "player": {
+                "name": player_data["name"],
+                "class": player_data["class"],
+                "gender": player_data["gender"],
+                "mental": player_data["mental"],
+                "physical": player_data["physical"],
+                "spiritual": player_data["spiritual"],
+                "max_health": player_data["max_health"],
+                "current_health": player_data["current_health"],
+                "inventory": player_data["inventory"],
+                "special_abilities": player_data["special_abilities"]
+            },
+            "current_node": game_state["current_node"],
+            "turn_counter": game_state["turn_counter"]
+        }
     
     except Exception as e:
         print(f"Error loading game: {e}")

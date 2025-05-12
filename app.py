@@ -301,23 +301,10 @@ def load_game():
     # Load game
     loaded_game = save_load.load_game()
     if loaded_game:
-        player_obj, current_node, turn_counter = loaded_game
-
         # Store in session
-        session['player'] = {
-            'name': player_obj.name,
-            'class': player_obj.character_class,
-            'gender': player_obj.gender,
-            'mental': player_obj.mental,
-            'physical': player_obj.physical,
-            'spiritual': player_obj.spiritual,
-            'max_health': player_obj.max_health,
-            'current_health': player_obj.current_health,
-            'inventory': player_obj.inventory,
-            'special_abilities': player_obj.special_abilities
-        }
-        session['current_node'] = current_node
-        session['turn_counter'] = turn_counter
+        session['player'] = loaded_game['player']
+        session['current_node'] = loaded_game['current_node']
+        session['turn_counter'] = loaded_game['turn_counter']
 
         flash('Jogo carregado com sucesso!', 'success')
         return redirect(url_for('game'))
