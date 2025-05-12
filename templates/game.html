@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yorùbáland RPG - Jogo</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .game-title {
+            font-size: 2rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .game-card {
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 10px;
+        }
+        .story-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        .choice-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .choice-btn:hover {
+            background-color: #3c3c3c;
+            transform: translateY(-2px);
+        }
+        .attribute-label {
+            width: 100px;
+            display: inline-block;
+        }
+        .progress-mental {
+            background-color: #3498db;
+        }
+        .progress-physical {
+            background-color: #e74c3c;
+        }
+        .progress-spiritual {
+            background-color: #9b59b6;
+        }
+        .inventory-item {
+            padding: 8px 12px;
+            margin: 4px;
+            background-color: #333;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .command-box {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 8px;
+        }
+        .btn-primary {
+            background-color: #6351ce;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #7b6ad1;
+        }
+        .footer {
+            margin-top: 3rem;
+            padding: 1rem 0;
+            border-top: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="row">
+            <!-- Game area -->
+            <div class="col-md-8">
+                <!-- Story panel -->
+                <div class="game-card p-4 mb-4">
+                    <h2 class="game-title mb-3">{{ node.get('title', 'Yorùbáland') }}</h2>
+                    <div class="story-text mb-4">{{ node.text }}</div>
+                    
+                    <!-- Choices section -->
+                    {% if node.choices %}
+                    <div class="choices-section mt-4">
+                        <h4 class="mb-3">O que você fará?</h4>
+                        <form action="/make_choice" method="post">
+                            <input type="hidden" name="node_id" value="{{ node_id }}">
+                            {% for choice in node.choices %}
+                            <button type="submit" name="choice_index" value="{{ loop.index0 }}" class="choice-btn">
+                                {{ loop.index }}. {{ choice.text }}
+                                {% if choice.test %}
+                                <small class="text-muted d-block">(Teste de {{ choice.test }})</small>
+                                {% endif %}
+                            </button>
+                            {% endfor %}
+                        </form>
+                    </div>
+                    {% elif node.battle %}
+                    <div class="battle-section mt-4">
+                        <h4 class="mb-3">Batalha!</h4>
+                        <p>Você está em combate com {{ node.enemy_name }}!</p>
+                        <form action="/battle_action" method="post">
+                            <input type="hidden" name="node_id" value="{{ node_id }}">
+                            <input type="hidden" name="enemy_id" value="{{ node.battle }}">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button type="submit" name="action" value="attack" class="btn btn-danger mb-2 w-100">Atacar</button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" name="action" value="defend" class="btn btn-primary mb-2 w-100">Defender</button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" name="action" value="spirit" class="btn btn-info mb-2 w-100">Espírito</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% elif node.next_node %}
+                    <div class="next-section mt-4">
+                        <form action="/continue" method="post">
+                            <input type="hidden" name="node_id" value="{{ node_id }}">
+                            <button type="submit" class="btn btn-primary">Continuar...</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Command interface -->
+                <div class="game-card p-3 mb-4">
+                    <form action="/command" method="post" class="d-flex">
+                        <input type="text" name="command" class="form-control command-box me-2" placeholder="Digite um comando (status, ajuda, salvar)">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Character panel -->
+            <div class="col-md-4">
+                <div class="game-card p-4 mb-4">
+                    <h3 class="mb-3">{{ player.name }}</h3>
+                    <p>{{ player.class }} ({{ player.gender }})</p>
+                    
+                    <h5 class="mt-4 mb-3">Atributos</h5>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="attribute-label">Mental:</span>
+                            <div class="progress flex-grow-1">
+                                <div class="progress-bar progress-mental" role="progressbar" style="width: {{ player.mental * 5 }}%" aria-valuenow="{{ player.mental }}" aria-valuemin="0" aria-valuemax="20">{{ player.mental }}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="attribute-label">Físico:</span>
+                            <div class="progress flex-grow-1">
+                                <div class="progress-bar progress-physical" role="progressbar" style="width: {{ player.physical * 5 }}%" aria-valuenow="{{ player.physical }}" aria-valuemin="0" aria-valuemax="20">{{ player.physical }}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="attribute-label">Espiritual:</span>
+                            <div class="progress flex-grow-1">
+                                <div class="progress-bar progress-spiritual" role="progressbar" style="width: {{ player.spiritual * 5 }}%" aria-valuenow="{{ player.spiritual }}" aria-valuemin="0" aria-valuemax="20">{{ player.spiritual }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="attribute-label">Vida:</span>
+                        <div class="progress flex-grow-1">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ (player.current_health / player.max_health) * 100 }}%" aria-valuenow="{{ player.current_health }}" aria-valuemin="0" aria-valuemax="{{ player.max_health }}">{{ player.current_health }}/{{ player.max_health }}</div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4 mb-2">Inventário</h5>
+                    <div class="inventory-section mb-3">
+                        {% if player.inventory %}
+                            {% for item in player.inventory %}
+                            <span class="inventory-item">{{ item }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Inventário vazio</p>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="mt-4 mb-2">Habilidades Especiais</h5>
+                    <div class="abilities-section">
+                        {% if player.special_abilities %}
+                            {% for ability in player.special_abilities %}
+                            <span class="inventory-item">{{ ability }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Nenhuma habilidade especial</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="game-card p-3 text-center">
+                    <form action="/save_game" method="post" class="mb-2">
+                        <button type="submit" class="btn btn-success w-100">Salvar Jogo</button>
+                    </form>
+                    <a href="/play" class="btn btn-outline-light w-100">Sair do Jogo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer text-center">
+        <div class="container">
+            <p>© 2025 Yorùbáland RPG - Uma Aventura Baseada em Texto</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

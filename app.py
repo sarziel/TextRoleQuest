@@ -4,7 +4,8 @@ A Flask web interface for the text-based RPG
 """
 
 import os
-from flask import Flask, render_template, request, redirect, url_for, session
+import random
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 # Create Flask app
 app = Flask(__name__)
@@ -70,7 +71,375 @@ def game():
     current_node_id = session.get('current_node', 'start')
     node_data = node_map.get_node(current_node_id)
     
-    return render_template('game.html', node=node_data, player=session['player'])
+    return render_template('game.html', node=node_data, node_id=current_node_id, player=session['player'])
+
+@app.route('/make_choice', methods=['POST'])
+def make_choice():
+    """Process a player's choice"""
+    if 'player' not in session:
+        return redirect(url_for('create_character'))
+    
+    node_id = request.form.get('node_id')
+    choice_index = int(request.form.get('choice_index', 0))
+    
+    # Get the node and choice
+    node = node_map.get_node(node_id)
+    if 'choices' in node and len(node['choices']) > choice_index:
+        choice = node['choices'][choice_index]
+        
+        # Check if this is a test/challenge
+        if 'test' in choice:
+            test_type = choice['test']
+            difficulty = choice.get('difficulty', 10)
+            
+            # Get player attribute
+            player_attr = session['player'].get(test_type, 0)
+            
+            # Roll dice (1-20)
+            roll = random.randint(1, 20)
+            total = roll + player_attr
+            
+            # Determine success or failure
+            if total >= difficulty:
+                # Success
+                session['current_node'] = choice['success_node']
+                flash(f'Teste de {test_type} bem sucedido! Rolagem: {roll}, Total: {total}', 'success')
+            else:
+                # Failure
+                session['current_node'] = choice['failure_node']
+                flash(f'Teste de {test_type} falhou! Rolagem: {roll}, Total: {total}', 'danger')
+        
+        # Check if this is a battle
+        elif 'battle' in choice:
+            enemy = choice['battle']
+            session['battle_enemy'] = enemy
+            session['victory_node'] = choice.get('victory_node')
+            session['defeat_node'] = choice.get('defeat_node')
+            
+            # Redirect to battle
+            return redirect(url_for('battle_start'))
+        
+        # Direct navigation
+        else:
+            session['current_node'] = choice['next_node']
+    
+    return redirect(url_for('game'))
+
+@app.route('/continue', methods=['POST'])
+def continue_story():
+    """Continue to the next node when there are no choices"""
+    if 'player' not in session:
+        return redirect(url_for('create_character'))
+    
+    node_id = request.form.get('node_id')
+    node = node_map.get_node(node_id)
+    
+    if 'next_node' in node:
+        session['current_node'] = node['next_node']
+    
+    return redirect(url_for('game'))
+
+@app.route('/command', methods=['POST'])
+def process_command():
+    """Process special commands entered by the player"""
+    if 'player' not in session:
+        return redirect(url_for('create_character'))
+    
+    command = request.form.get('command', '').strip().lower()
+    
+    if command == 'status':
+        flash('Seus atributos e status são mostrados no painel lateral.', 'info')
+    elif command in ['ajuda', 'help']:
+        help_text = """
+        Comandos disponíveis:
+        - status: Ver seus atributos e status
+        - ajuda ou help: Mostrar esta ajuda
+        - salvar: Salvar manualmente seu progresso
+        
+        Durante batalhas:
+        - atacar: Usar seu atributo físico para atacar
+        - defender: Adotar postura defensiva
+        - espirito: Usar seu atributo espiritual
+        """
+        flash(help_text, 'info')
+    elif command in ['salvar', 'save']:
+        # We'll implement this in the save_game route
+        return redirect(url_for('save_game'))
+    else:
+        flash(f'Comando desconhecido: {command}', 'warning')
+    
+    return redirect(url_for('game'))
+
+@app.route('/save_game', methods=['GET', 'POST'])
+def save_game():
+    """Save the current game state"""
+    if 'player' not in session:
+        return redirect(url_for('create_character'))
+    
+    # Get current turn counter
+    turn_counter = session.get('turn_counter', 0)
+    
+    # Save game using the save_load module
+    success = save_load.save_game(session['player'], session['current_node'], turn_counter)
+    
+    if success:
+        flash('Jogo salvo com sucesso!', 'success')
+    else:
+        flash('Erro ao salvar o jogo.', 'danger')
+    
+    return redirect(url_for('game'))
+
+@app.route('/load_game')
+def load_game():
+    """Load a saved game"""
+    # Check if save exists
+    if not save_load.save_exists():
+        flash('Nenhum jogo salvo encontrado.', 'warning')
+        return redirect(url_for('play'))
+    
+    # Load game
+    loaded_game = save_load.load_game()
+    if loaded_game:
+        player_obj, current_node, turn_counter = loaded_game
+        
+        # Store in session
+        session['player'] = {
+            'name': player_obj.name,
+            'class': player_obj.character_class,
+            'gender': player_obj.gender,
+            'mental': player_obj.mental,
+            'physical': player_obj.physical,
+            'spiritual': player_obj.spiritual,
+            'max_health': player_obj.max_health,
+            'current_health': player_obj.current_health,
+            'inventory': player_obj.inventory,
+            'special_abilities': player_obj.special_abilities
+        }
+        session['current_node'] = current_node
+        session['turn_counter'] = turn_counter
+        
+        flash('Jogo carregado com sucesso!', 'success')
+        return redirect(url_for('game'))
+    else:
+        flash('Erro ao carregar o jogo.', 'danger')
+        return redirect(url_for('play'))
+        
+@app.route('/battle_start')
+def battle_start():
+    """Start a battle with an enemy"""
+    if 'player' not in session or 'battle_enemy' not in session:
+        return redirect(url_for('game'))
+    
+    # Get enemy data
+    enemy_id = session['battle_enemy']
+    enemy_data = battle.get_enemy_data(enemy_id)
+    
+    if not enemy_data:
+        flash('Erro ao iniciar batalha: inimigo não encontrado.', 'danger')
+        return redirect(url_for('game'))
+    
+    # Initialize battle session
+    session['enemy'] = {
+        'id': enemy_id,
+        'name': enemy_data['name'],
+        'description': enemy_data['description'],
+        'max_health': enemy_data['health'],
+        'current_health': enemy_data['health'],
+        'attack': enemy_data['attack'],
+        'defense': enemy_data['defense'],
+        'spirit_resistance': enemy_data.get('spirit_resistance', 10)
+    }
+    
+    session['battle_log'] = [f"Você encontrou um {enemy_data['name']}!"]
+    
+    return render_template('battle.html', 
+                          player=session['player'],
+                          enemy=session['enemy'],
+                          battle_log=session['battle_log'])
+
+@app.route('/battle_action', methods=['POST'])
+def battle_action():
+    """Process a battle action"""
+    if 'player' not in session or 'enemy' not in session:
+        return redirect(url_for('game'))
+    
+    action = request.form.get('action')
+    
+    # Get player and enemy data
+    player_data = session['player']
+    enemy_data = session['enemy']
+    
+    # Initialize battle variables
+    dice_roll = random.randint(1, 20)
+    battle_message = ""
+    battle_success = False
+    player_damage_taken = 0
+    enemy_damage_taken = 0
+    
+    # Process player action
+    if action == 'attack':
+        # Physical attack
+        attack_total = dice_roll + player_data['physical']
+        
+        if dice_roll == 20:  # Critical hit
+            enemy_damage_taken = (player_data['physical'] * 2) + random.randint(3, 6)
+            battle_message = f"Acerto crítico! Você causou {enemy_damage_taken} pontos de dano!"
+            battle_success = True
+        elif dice_roll == 1:  # Critical miss
+            enemy_damage_taken = 0
+            battle_message = "Erro crítico! Você tropeça e erra o ataque!"
+            battle_success = False
+        elif attack_total >= enemy_data['defense'] + 5:  # Strong hit
+            enemy_damage_taken = player_data['physical'] + random.randint(2, 5)
+            battle_message = f"Ótimo golpe! Você causou {enemy_damage_taken} pontos de dano!"
+            battle_success = True
+        elif attack_total >= enemy_data['defense']:  # Normal hit
+            enemy_damage_taken = max(1, player_data['physical'] + random.randint(0, 3) - enemy_data['defense'] // 2)
+            battle_message = f"Você acerta o golpe e causa {enemy_damage_taken} pontos de dano."
+            battle_success = True
+        else:  # Miss
+            enemy_damage_taken = 0
+            battle_message = "Seu ataque foi bloqueado ou desviado."
+            battle_success = False
+    
+    elif action == 'defend':
+        # Defensive stance
+        session['defending'] = True
+        battle_message = "Você assume uma postura defensiva!"
+        battle_success = True
+    
+    elif action == 'spirit':
+        # Spiritual attack/action
+        spirit_total = dice_roll + player_data['spiritual']
+        
+        if dice_roll == 20:  # Critical success
+            if random.random() < 0.5:  # 50% chance for damage
+                enemy_damage_taken = player_data['spiritual'] * 2 + random.randint(2, 8)
+                battle_message = f"Os Òrìṣà atendem seu chamado com poder imenso! Você causa {enemy_damage_taken} pontos de dano espiritual!"
+                battle_success = True
+            else:  # 50% chance for healing
+                heal_amount = player_data['spiritual'] + random.randint(3, 8)
+                player_data['current_health'] = min(player_data['current_health'] + heal_amount, player_data['max_health'])
+                battle_message = f"Os Òrìṣà renovam sua força vital! Você recupera {heal_amount} pontos de vida!"
+                battle_success = True
+        elif dice_roll == 1:  # Critical failure
+            backfire = random.randint(1, 4)
+            player_data['current_health'] -= backfire
+            battle_message = f"A energia espiritual se descontrola! Você sofre {backfire} pontos de dano!"
+            battle_success = False
+        elif spirit_total >= enemy_data['spirit_resistance'] + 5:  # Strong spiritual effect
+            enemy_damage_taken = player_data['spiritual'] + random.randint(2, 5)
+            battle_message = f"A energia espiritual afeta profundamente o inimigo! Você causa {enemy_damage_taken} pontos de dano espiritual!"
+            battle_success = True
+        elif spirit_total >= enemy_data['spirit_resistance']:  # Normal spiritual effect
+            enemy_damage_taken = max(1, player_data['spiritual'] - enemy_data['spirit_resistance'] // 3)
+            heal_amount = random.randint(1, 3)
+            player_data['current_health'] = min(player_data['current_health'] + heal_amount, player_data['max_health'])
+            battle_message = f"Você canaliza energia espiritual e causa {enemy_damage_taken} pontos de dano! Também recupera {heal_amount} pontos de vida."
+            battle_success = True
+        else:  # Failure
+            battle_message = "Você tenta canalizar energia espiritual, mas falha."
+            battle_success = False
+    
+    # Apply damage to enemy
+    enemy_data['current_health'] -= enemy_damage_taken
+    
+    # Log the action
+    session['battle_log'].insert(0, battle_message)
+    
+    # If enemy still alive, process enemy attack
+    if enemy_data['current_health'] > 0:
+        # Enemy attacks
+        enemy_message = f"O {enemy_data['name']} ataca!"
+        session['battle_log'].insert(0, enemy_message)
+        
+        # Calculate damage
+        base_damage = enemy_data['attack']
+        if session.get('defending', False):
+            player_damage_taken = max(1, base_damage - player_data['physical'] - random.randint(2, 5))
+            enemy_message = f"Sua defesa reduziu o dano! Você recebe {player_damage_taken} pontos de dano."
+        else:
+            player_damage_taken = max(1, base_damage - random.randint(0, 2))
+            enemy_message = f"Você recebe {player_damage_taken} pontos de dano!"
+        
+        # Apply damage to player
+        player_data['current_health'] -= player_damage_taken
+        
+        # Log the enemy action
+        session['battle_log'].insert(0, enemy_message)
+        
+        # Reset defending status
+        session['defending'] = False
+    
+    # Update session data
+    session['player'] = player_data
+    session['enemy'] = enemy_data
+    
+    # Check if battle is over
+    if enemy_data['current_health'] <= 0:
+        # Player won
+        enemy_rewards = battle.get_enemy_data(enemy_data['id']).get('rewards', {})
+        session['battle_rewards'] = enemy_rewards
+        
+        # Process rewards
+        reward_message = "Você ganhou: "
+        
+        if 'attribute' in enemy_rewards:
+            attr_type = enemy_rewards['attribute']['type']
+            attr_amount = enemy_rewards['attribute']['amount']
+            player_data[attr_type] += attr_amount
+            reward_message += f"+{attr_amount} {attr_type}, "
+        
+        if 'item' in enemy_rewards:
+            item = enemy_rewards['item']
+            if 'inventory' not in player_data:
+                player_data['inventory'] = []
+            player_data['inventory'].append(item)
+            reward_message += f"{item}, "
+        
+        if 'health' in enemy_rewards:
+            health_amount = enemy_rewards['health']
+            player_data['current_health'] = min(player_data['current_health'] + health_amount, player_data['max_health'])
+            reward_message += f"+{health_amount} de vida, "
+        
+        # Update session
+        session['player'] = player_data
+        session['battle_log'].insert(0, "Vitória! " + reward_message[:-2])
+    
+    elif player_data['current_health'] <= 0:
+        # Player lost
+        session['battle_log'].insert(0, f"Você foi derrotado pelo {enemy_data['name']}!")
+    
+    # Render the battle template with updated data
+    return render_template('battle.html', 
+                          player=session['player'],
+                          enemy=session['enemy'],
+                          battle_log=session['battle_log'],
+                          dice_roll=dice_roll,
+                          battle_message=battle_message,
+                          battle_success=battle_success)
+
+@app.route('/battle_end', methods=['POST'])
+def battle_end():
+    """End the battle and return to the game"""
+    if 'player' not in session:
+        return redirect(url_for('create_character'))
+    
+    result = request.form.get('result')
+    
+    if result == 'victory':
+        # Go to victory node
+        session['current_node'] = session.get('victory_node', 'start')
+    else:
+        # Go to defeat node
+        session['current_node'] = session.get('defeat_node', 'start')
+    
+    # Clean up battle session data
+    for key in ['enemy', 'battle_enemy', 'battle_log', 'battle_rewards', 'victory_node', 'defeat_node', 'defending']:
+        if key in session:
+            session.pop(key)
+    
+    return redirect(url_for('game'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

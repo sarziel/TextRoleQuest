@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Personagem - Yorùbáland RPG</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .game-title {
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .game-subtitle {
+            font-size: 1.2rem;
+            color: #6fceeb;
+        }
+        .game-card {
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 10px;
+        }
+        .character-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .character-option:hover {
+            transform: translateY(-5px);
+        }
+        .character-option.selected {
+            border: 2px solid #ffd700;
+            background-color: rgba(255, 215, 0, 0.1);
+        }
+        .attribute-bar {
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .mental-bar {
+            background-color: #3498db;
+        }
+        .physical-bar {
+            background-color: #e74c3c;
+        }
+        .spiritual-bar {
+            background-color: #9b59b6;
+        }
+        .btn-primary {
+            background-color: #6351ce;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #7b6ad1;
+        }
+        .footer {
+            margin-top: 3rem;
+            padding: 1rem 0;
+            border-top: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="game-title mb-3">YORÙBÁLAND: JORNADA ATRAVÉS DO TEMPO</h1>
+            <p class="game-subtitle">Crie Seu Personagem</p>
+        </header>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form action="/create_character" method="post">
+                    <div class="game-card p-4 mb-4">
+                        <h3 class="mb-4">1. Escolha Seu Nome</h3>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="name" name="name" required placeholder="Digite o nome do seu personagem">
+                        </div>
+                    </div>
+
+                    <div class="game-card p-4 mb-4">
+                        <h3 class="mb-4">2. Escolha Sua Profissão</h3>
+                        <div class="row g-4 mb-3">
+                            <div class="col-md-6">
+                                <div class="character-option game-card h-100 p-3 text-center" id="scientist-option" onclick="selectClass('Cientista')">
+                                    <h4>Cientista</h4>
+                                    <p>Especialista em conhecimento científico e análise racional.</p>
+                                    <div class="attribute-container mb-2">
+                                        <label>Mental</label>
+                                        <div class="attribute-bar">
+                                            <div class="mental-bar" style="width: 90%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="attribute-container mb-2">
+                                        <label>Físico</label>
+                                        <div class="attribute-bar">
+                                            <div class="physical-bar" style="width: 60%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="attribute-container mb-2">
+                                        <label>Espiritual</label>
+                                        <div class="attribute-bar">
+                                            <div class="spiritual-bar" style="width: 50%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="character-option game-card h-100 p-3 text-center" id="archaeologist-option" onclick="selectClass('Arqueólogo')">
+                                    <h4>Arqueólogo</h4>
+                                    <p>Especialista em culturas antigas e artefatos históricos.</p>
+                                    <div class="attribute-container mb-2">
+                                        <label>Mental</label>
+                                        <div class="attribute-bar">
+                                            <div class="mental-bar" style="width: 80%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="attribute-container mb-2">
+                                        <label>Físico</label>
+                                        <div class="attribute-bar">
+                                            <div class="physical-bar" style="width: 70%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="attribute-container mb-2">
+                                        <label>Espiritual</label>
+                                        <div class="attribute-bar">
+                                            <div class="spiritual-bar" style="width: 60%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="class" name="class" required>
+                        </div>
+                    </div>
+
+                    <div class="game-card p-4 mb-4">
+                        <h3 class="mb-4">3. Escolha Seu Gênero</h3>
+                        <div class="row g-4 mb-3">
+                            <div class="col-md-6">
+                                <div class="character-option game-card h-100 p-3 text-center" id="male-option" onclick="selectGender('Homem')">
+                                    <h4>Homem</h4>
+                                    <p>Pesquisador atraído para a antiga Yorùbáland.</p>
+                                    <p><small>+1 Físico para qualquer profissão</small></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="character-option game-card h-100 p-3 text-center" id="female-option" onclick="selectGender('Mulher')">
+                                    <h4>Mulher</h4>
+                                    <p>Pesquisadora atraída para a antiga Yorùbáland.</p>
+                                    <p><small>Cientistas: +1 Mental, -1 Físico<br>Arqueólogos: +1 Espiritual</small></p>
+                                </div>
+                            </div>
+                            <input type="hidden" id="gender" name="gender" required>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4 mb-5">
+                        <button type="submit" class="btn btn-primary btn-lg px-5" id="submit-btn" disabled>Iniciar Aventura</button>
+                    </div>
+                </form>
+                
+                <div class="text-center">
+                    <a href="/play" class="btn btn-link">Voltar ao Menu do Jogo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer text-center">
+        <div class="container">
+            <p>© 2025 Yorùbáland RPG - Uma Aventura Baseada em Texto</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Rastrear seleções
+        let selectedClass = null;
+        let selectedGender = null;
+        
+        // Função para verificar se o formulário está completo
+        function checkFormComplete() {
+            const nameField = document.getElementById('name');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (nameField.value.trim() && selectedClass && selectedGender) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+        
+        // Atualizar seleção para classe
+        function selectClass(className) {
+            // Remover seleção anterior
+            document.querySelectorAll('.character-option').forEach(option => {
+                if (option.id === 'scientist-option' || option.id === 'archaeologist-option') {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // Definir nova seleção
+            selectedClass = className;
+            document.getElementById('class').value = className;
+            
+            if (className === 'Cientista') {
+                document.getElementById('scientist-option').classList.add('selected');
+            } else {
+                document.getElementById('archaeologist-option').classList.add('selected');
+            }
+            
+            checkFormComplete();
+        }
+        
+        // Atualizar seleção para gênero
+        function selectGender(gender) {
+            // Remover seleção anterior
+            document.querySelectorAll('.character-option').forEach(option => {
+                if (option.id === 'male-option' || option.id === 'female-option') {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // Definir nova seleção
+            selectedGender = gender;
+            document.getElementById('gender').value = gender;
+            
+            if (gender === 'Homem') {
+                document.getElementById('male-option').classList.add('selected');
+            } else {
+                document.getElementById('female-option').classList.add('selected');
+            }
+            
+            checkFormComplete();
+        }
+        
+        // Verificar preenchimento quando o nome muda
+        document.getElementById('name').addEventListener('input', checkFormComplete);
+    </script>
+</body>
+</html>
