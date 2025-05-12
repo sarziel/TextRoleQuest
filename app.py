@@ -24,7 +24,7 @@ login_manager.login_view = 'admin_login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.get_admin(user_id)
+    return db.get_admin_by_username(user_id)
 
 # Função para criar usuário admin
 def create_admin_user():

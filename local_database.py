@@ -8,6 +8,15 @@ class Admin(UserMixin):
         self.created_at = created_at
         self.last_login = last_login
         self.id = username  # usando username como ID
+        self._is_authenticated = True
+        
+    @property
+    def is_authenticated(self):
+        return self._is_authenticated
+        
+    @property
+    def is_active(self):
+        return True
 
 
 
