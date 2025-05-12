@@ -1250,7 +1250,6 @@ Adewale se levanta e caminha até um pequeno nicho na parede, de onde retira um 
 
 "Adigun não busca mais comungar com os Òrìṣà - ele pretende romper completamente a barreira entre os mundos, permitindo que os Ajoguns, entidades do caos, invadam Yorùbáland."
 """,
-        ```python
         "choices": [
             {
                 "text": "Perguntar onde Adigun poderia estar escondido",
