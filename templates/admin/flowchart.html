@@ -47,7 +47,6 @@
         theme: 'dark',
         flowchart: {
             curve: 'basis',
-            defaultRenderer: 'elk',
             htmlLabels: true,
             nodeSpacing: 50,
             rankSpacing: 50,
@@ -88,8 +87,8 @@
             let nodeClass = '';
             let safeNodeId = nodeId.replace(/[^a-zA-Z0-9]/g, '_');
             let nodeTitle = node.title ? 
-                `${safeNodeId}["${nodeId}<br>${node.title.replace(/"/g, "')}"]` : 
-                `${safeNodeId}["${nodeId}"]`;
+                `${safeNodeId}["${nodeId.replace(/"/g, "'")}<br>${node.title.replace(/"/g, "'")}"]` : 
+                `${safeNodeId}["${nodeId.replace(/"/g, "'")}"]`;
             
             if (node.battle) nodeClass = ':::battle';
             else if (node.end) nodeClass = ':::end';
