@@ -456,6 +456,11 @@ def battle_action():
 
         # Apply damage to player
         player_data['current_health'] -= player_damage_taken
+        
+        # Check if player died
+        if player_data['current_health'] <= 0:
+            session['battle_log'].insert(0, "Você perdeu todos os pontos de vida e morreu!")
+            return redirect(url_for('game', node_id='04_001'))  # Redireciona para nó de morte
 
         # Log the enemy action
         session['battle_log'].insert(0, enemy_message)

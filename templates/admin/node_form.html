@@ -18,11 +18,17 @@
 
                     <div class="mb-3">
                         <label for="node_type" class="form-label">Tipo de Nó</label>
-                        <select class="form-select" id="node_type" name="node_type">
-                            <option value="normal" {% if not node.battle and not node.next_node %}selected{% endif %}>Nó com Escolhas</option>
-                            <option value="sequential" {% if node.next_node %}selected{% endif %}>Nó Sequencial</option>
-                            <option value="battle" {% if node.battle %}selected{% endif %}>Nó de Batalha</option>
+                        <select class="form-select" id="node_type" name="node_type" onchange="updateNodeId()">
+                            <option value="normal" {% if not node.battle and not node.next_node %}selected{% endif %}>Nó com Escolhas (01_XXX)</option>
+                            <option value="sequential" {% if node.next_node %}selected{% endif %}>Nó Sequencial (03_XXX)</option>
+                            <option value="battle" {% if node.battle %}selected{% endif %}>Nó de Batalha (02_XXX)</option>
+                            <option value="final">Nó Final (04_XXX)</option>
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="node_id" class="form-label">ID do Nó</label>
+                        <input type="text" class="form-control" id="node_id" name="node_id" readonly>
                     </div>
 
                     <div class="mb-3">
@@ -91,6 +97,32 @@
 </div>
 
 <script>
+// Função para gerar ID do nó baseado no tipo
+function updateNodeId() {
+    const nodeType = document.getElementById('node_type').value;
+    const nodeIdInput = document.getElementById('node_id');
+    let prefix;
+    
+    switch(nodeType) {
+        case 'normal':
+            prefix = '01';
+            break;
+        case 'battle':
+            prefix = '02';
+            break;
+        case 'sequential':
+            prefix = '03';
+            break;
+        case 'final':
+            prefix = '04';
+            break;
+    }
+    
+    // Gera número sequencial aleatório de 3 dígitos
+    const randomNum = Math.floor(Math.random() * 999).toString().padStart(3, '0');
+    nodeIdInput.value = `${prefix}_${randomNum}`;
+}
+
 // Função para mostrar/esconder campos baseado no tipo de nó
 function updateNodeFields() {
     const nodeType = document.getElementById('node_type').value;
