@@ -674,7 +674,26 @@ def admin_edit_node(node_id):
     if request.method == 'POST':
         node['title'] = request.form.get('title')
         node['text'] = request.form.get('text')
-        node['next_node'] = request.form.get('next_node')
+        next_node = request.form.get('next_node')
+        if next_node:
+            node['next_node'] = next_node
+        elif 'next_node' in node:
+            del node['next_node']
+            
+        # Process choices
+        choice_texts = request.form.getlist('choice_text[]')
+        choice_next_nodes = request.form.getlist('choice_next_node[]')
+        
+        if choice_texts and any(choice_texts):
+            node['choices'] = []
+            for text, next_node in zip(choice_texts, choice_next_nodes):
+                if text and next_node:
+                    node['choices'].append({
+                        'text': text,
+                        'next_node': next_node
+                    })
+        elif 'choices' in node:
+            del node['choices']
         
         node_map.nodes[node_id] = node
         node_map.save_nodes()

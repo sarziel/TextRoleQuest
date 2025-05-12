@@ -160,6 +160,12 @@ def count_nodes():
     """
     return len(nodes)
 
+def save_nodes():
+    """Save the current nodes to memory"""
+    # In this implementation, nodes are kept in memory
+    # You could extend this to save to a file if needed
+    pass
+
 # Define the story nodes
 nodes = {
     "start": {

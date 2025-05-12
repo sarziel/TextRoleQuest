@@ -28,8 +28,30 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="next_node" class="form-label">Próximo Nó</label>
+                        <label for="next_node" class="form-label">Próximo Nó (se não houver escolhas)</label>
                         <input type="text" class="form-control" id="next_node" name="next_node" value="{{ node.next_node if node else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Escolhas</label>
+                        <div id="choices-container">
+                            {% if node and node.choices %}
+                                {% for choice in node.choices %}
+                                <div class="choice-item border rounded p-3 mb-2">
+                                    <div class="mb-2">
+                                        <label class="form-label">Texto da Escolha</label>
+                                        <input type="text" class="form-control" name="choice_text[]" value="{{ choice.text }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Próximo Nó</label>
+                                        <input type="text" class="form-control" name="choice_next_node[]" value="{{ choice.next_node if 'next_node' in choice else '' }}">
+                                    </div>
+                                    <button type="button" class="btn btn-danger btn-sm remove-choice">Remover Escolha</button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-success mt-2" id="add-choice">Adicionar Escolha</button>
                     </div>
                     
                     <div class="d-flex justify-content-between">
@@ -41,4 +63,30 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('add-choice').addEventListener('click', function() {
+    const container = document.getElementById('choices-container');
+    const newChoice = document.createElement('div');
+    newChoice.className = 'choice-item border rounded p-3 mb-2';
+    newChoice.innerHTML = `
+        <div class="mb-2">
+            <label class="form-label">Texto da Escolha</label>
+            <input type="text" class="form-control" name="choice_text[]">
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Próximo Nó</label>
+            <input type="text" class="form-control" name="choice_next_node[]">
+        </div>
+        <button type="button" class="btn btn-danger btn-sm remove-choice">Remover Escolha</button>
+    `;
+    container.appendChild(newChoice);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-choice')) {
+        e.target.closest('.choice-item').remove();
+    }
+});
+</script>
 {% endblock %}
