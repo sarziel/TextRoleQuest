@@ -52,7 +52,41 @@
          data-is-end="{{ 'end' in node and node.end }}">
         <div class="card h-100 shadow">
             <div class="card-header {% if 'battle' in node %}bg-danger{% elif 'end' in node and node.end %}bg-success{% elif 'choices' in node %}bg-primary{% else %}bg-secondary{% endif %}">
-                <h5 class="card-title text-white mb-0">{{ node_id }}</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title text-white mb-0">{{ node_id }}</h5>
+                    {% set valid = true %}
+                    {% if 'choices' in node %}
+                        {% for choice in node.choices %}
+                            {% if 'next_node' in choice and choice.next_node not in nodes %}
+                                {% set valid = false %}
+                            {% endif %}
+                            {% if 'success_node' in choice and choice.success_node not in nodes %}
+                                {% set valid = false %}
+                            {% endif %}
+                            {% if 'failure_node' in choice and choice.failure_node not in nodes %}
+                                {% set valid = false %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% if 'next_node' in node and node.next_node not in nodes %}
+                        {% set valid = false %}
+                    {% endif %}
+                    {% if 'battle' in node %}
+                        {% if 'victory_node' in node and node.victory_node not in nodes %}
+                            {% set valid = false %}
+                        {% endif %}
+                        {% if 'defeat_node' in node and node.defeat_node not in nodes %}
+                            {% set valid = false %}
+                        {% endif %}
+                    {% endif %}
+                    <span class="badge {% if valid %}bg-success{% else %}bg-danger{% endif %}">
+                        {% if valid %}
+                            <i class="bi bi-check-circle"></i> Conexões Válidas
+                        {% else %}
+                            <i class="bi bi-exclamation-triangle"></i> Conexões Inválidas
+                        {% endif %}
+                    </span>
+                </div>
             </div>
             <div class="card-body">
                 {% if 'title' in node %}
