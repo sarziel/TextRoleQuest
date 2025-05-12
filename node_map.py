@@ -168,7 +168,7 @@ def save_nodes():
 
 # Define the story nodes
 nodes = {
-    "start": {
+    "1": {
         "title": "O Portal Ancestral",
         "text": """Você é transportado em um redemoinho de luz e cor. Quando a visão retorna, você se encontra em um cenário completamente diferente.
 

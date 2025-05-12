@@ -78,9 +78,9 @@
             ctx.fillStyle = '#fff';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            // Display ID and Title
+            // Display numeric ID and Title
             ctx.font = '12px Arial';
-            ctx.fillText(this.id, this.x + this.width/2, this.y + 20);
+            ctx.fillText(`ID: ${this.id}`, this.x + this.width/2, this.y + 20);
             
             if (this.data.title) {
                 ctx.font = '11px Arial';
