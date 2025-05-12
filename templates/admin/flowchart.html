@@ -75,7 +75,7 @@
 
     function generateFlowchart() {
         let nodes = {{ nodes|tojson|safe }};
-        let flowDef = ['flowchart TB'];
+        let flowDef = ['graph TD'];
         
         // Definir estilos
         flowDef.push('    classDef battle fill:#ff6b6b,stroke:#ff6b6b,color:#fff');
@@ -86,35 +86,44 @@
         // Adicionar nós
         for (let [nodeId, node] of Object.entries(nodes)) {
             let nodeClass = '';
-            let nodeTitle = node.title ? `${nodeId}<br/>${node.title}` : nodeId;
+            let safeNodeId = nodeId.replace(/[^a-zA-Z0-9]/g, '_');
+            let nodeTitle = node.title ? 
+                `${safeNodeId}["${nodeId}<br>${node.title.replace(/"/g, "')}"]` : 
+                `${safeNodeId}["${nodeId}"]`;
             
             if (node.battle) nodeClass = ':::battle';
             else if (node.end) nodeClass = ':::end';
             else if (node.choices) nodeClass = ':::choice';
             
-            flowDef.push(`    ${nodeId}["${nodeTitle}"]${nodeClass}`);
+            flowDef.push(`    ${nodeTitle}${nodeClass}`);
             
             // Adicionar conexões
             if (node.choices) {
                 node.choices.forEach((choice, idx) => {
                     let targetNode = choice.next_node || choice.success_node;
                     if (targetNode) {
-                        let choiceText = choice.text.substring(0, 20) + (choice.text.length > 20 ? '...' : '');
-                        flowDef.push(`    ${nodeId} -->|"${choiceText}"| ${targetNode}`);
+                        let safeTargetId = targetNode.replace(/[^a-zA-Z0-9]/g, '_');
+                        let choiceText = choice.text.substring(0, 20).replace(/"/g, "'") + 
+                            (choice.text.length > 20 ? '...' : '');
+                        flowDef.push(`    ${safeNodeId} -->|"${choiceText}"| ${safeTargetId}`);
                     }
                     if (choice.failure_node) {
-                        flowDef.push(`    ${nodeId} -->|"Falha"| ${choice.failure_node}`);
+                        let safeFailureId = choice.failure_node.replace(/[^a-zA-Z0-9]/g, '_');
+                        flowDef.push(`    ${safeNodeId} -->|"Falha"| ${safeFailureId}`);
                     }
                 });
             }
             if (node.next_node) {
-                flowDef.push(`    ${nodeId} --> ${node.next_node}`);
+                let safeNextId = node.next_node.replace(/[^a-zA-Z0-9]/g, '_');
+                flowDef.push(`    ${safeNodeId} --> ${safeNextId}`);
             }
             if (node.victory_node) {
-                flowDef.push(`    ${nodeId} -->|"Vitória"| ${node.victory_node}`);
+                let safeVictoryId = node.victory_node.replace(/[^a-zA-Z0-9]/g, '_');
+                flowDef.push(`    ${safeNodeId} -->|"Vitória"| ${safeVictoryId}`);
             }
             if (node.defeat_node) {
-                flowDef.push(`    ${nodeId} -->|"Derrota"| ${node.defeat_node}`);
+                let safeDefeatId = node.defeat_node.replace(/[^a-zA-Z0-9]/g, '_');
+                flowDef.push(`    ${safeNodeId} -->|"Derrota"| ${safeDefeatId}`);
             }
         }
         
