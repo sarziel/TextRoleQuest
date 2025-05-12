@@ -17,6 +17,10 @@ import local_database as db
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
 
+# Setup database
+from database_config import init_db_config
+init_db_config(app)
+
 # Setup Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
