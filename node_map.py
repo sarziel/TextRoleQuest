@@ -36,10 +36,10 @@ import game_data
 def get_node(node_id):
     """
     Get a story node by its ID
-    
+
     Args:
         node_id (str): The ID of the node to retrieve
-        
+
     Returns:
         dict: The node data
     """
@@ -53,15 +53,15 @@ def get_node(node_id):
 def get_random_node_id(node_type=None):
     """
     Get a random node ID, optionally of a specific type
-    
+
     Args:
         node_type (str, optional): The type of node to retrieve
-        
+
     Returns:
         str: A random node ID
     """
     valid_nodes = []
-    
+
     for node_id, node_data in nodes.items():
         if node_type == "battle" and "battle" in node_data:
             valid_nodes.append(node_id)
@@ -71,7 +71,7 @@ def get_random_node_id(node_type=None):
             valid_nodes.append(node_id)
         elif node_type is None:
             valid_nodes.append(node_id)
-    
+
     if valid_nodes:
         return random.choice(valid_nodes)
     else:
@@ -80,7 +80,7 @@ def get_random_node_id(node_type=None):
 def count_nodes():
     """
     Count the total number of nodes in the game
-    
+
     Returns:
         int: The total number of nodes
     """
@@ -115,7 +115,7 @@ Por um momento, você se pergunta se está sonhando.""",
             }
         ]
     },
-    
+
     "examine_amulet": {
         "title": "O Amuleto Misterioso",
         "text": """Você segura o amuleto com cuidado, examinando-o de perto. É feito de um metal dourado que não consegue identificar, com intrincados símbolos gravados em sua superfície.
@@ -144,7 +144,7 @@ Enquanto você estuda o objeto, a pedra emite um brilho mais intenso, e você se
             }
         ]
     },
-    
+
     "amulet_vision": {
         "title": "Visões do Passado",
         "text": """Ao se concentrar na pedra azul, sua visão fica turva e você é inundado por imagens que fluem rapidamente:
@@ -168,7 +168,7 @@ A visão se dissipa, mas você agora possui um entendimento instintivo do poder 
             }
         ]
     },
-    
+
     "amulet_confusion": {
         "title": "Confusão Mental",
         "text": """Você se concentra na pedra, esperando algum tipo de revelação, mas nada acontece.
@@ -178,7 +178,7 @@ A pedra continua brilhando suavemente, mas parece que sua mente não consegue si
 Após alguns minutos frustrados de tentativa, você suspira e desiste. Talvez precise de algum conhecimento adicional para entender este artefato.""",
         "next_node": "follow_drums"
     },
-    
+
     "identify_symbols": {
         "title": "Símbolos Revelados",
         "text": """Observando atentamente os símbolos, você percebe padrões que remetem a suas pesquisas sobre culturas africanas antigas.
@@ -197,7 +197,7 @@ Sua formação acadêmica permitiu que você reconhecesse esses símbolos, mas v
             }
         ]
     },
-    
+
     "cant_identify": {
         "title": "Símbolos Misteriosos",
         "text": """Você examina os símbolos com atenção, mas eles não se encaixam em nenhum padrão que você reconheça de seus estudos.
@@ -207,7 +207,7 @@ Claramente são importantes e carregados de significado, mas sem mais contexto o
 Frustrado, você guarda o amuleto no bolso, decidindo que precisa aprender mais sobre onde está para entender o objeto.""",
         "next_node": "follow_drums"
     },
-    
+
     "follow_drums": {
         "title": "Seguindo o Ritmo",
         "text": """Orientando-se pelo som dos tambores, você começa a caminhar pela floresta. O caminho não é claro, mas o ritmo se torna mais alto à medida que avança.
@@ -235,7 +235,7 @@ Você se esconde atrás de uma árvore, observando a cena com espanto.""",
             }
         ]
     },
-    
+
     "follow_drums_informed": {
         "title": "Rumo à Aldeia",
         "text": """Com seu novo entendimento sobre onde está, você segue o som dos tambores com confiança renovada.
@@ -257,7 +257,7 @@ Logo, você avista uma aldeia yorùbá tradicional na distância. Pessoas dança
             }
         ]
     },
-    
+
     "observe_ritual": {
         "title": "Ritual de Invocação",
         "text": """De seu esconderijo, você observa com atenção o que acontece na aldeia.
@@ -281,7 +281,7 @@ No centro do círculo, um homem mais velho com vestes elaboradas parece entrar e
             }
         ]
     },
-    
+
     "forest_path": {
         "title": "Trilha na Floresta",
         "text": """Você deixa a aldeia para trás e segue por uma trilha estreita na floresta. O caminho é irregular e parcialmente coberto por vegetação, mas é claramente utilizado com frequência.
@@ -307,7 +307,7 @@ Após cerca de meia hora de caminhada, você chega a uma bifurcação. O caminho
             }
         ]
     },
-    
+
     "river_shrine": {
         "title": "O Santuário do Rio",
         "text": """Você segue a trilha que desce em direção ao vale. À medida que se aproxima, o som da água corrente se torna mais claro. Finalmente, a floresta se abre e revela um rio largo e calmo.
@@ -333,7 +333,7 @@ O local tem uma atmosfera serena, e você sente uma presença reconfortante, com
             }
         ]
     },
-    
+
     "stone_structure": {
         "title": "O Templo Antigo",
         "text": """Seguindo o caminho à direita, você sobe pela colina. A vegetação vai ficando mais esparsa, e logo você avista claramente a estrutura de pedra.
@@ -359,7 +359,7 @@ Ao se aproximar da entrada, você nota uma estátua de pedra representando uma f
             }
         ]
     },
-    
+
     "temple_interior": {
         "title": "Dentro do Templo de Sango",
         "text": """Você respira fundo e entra no templo. O interior é espaçoso e fresco comparado ao calor externo. Feixes de luz entram por pequenas aberturas no teto, iluminando o ambiente com um brilho dourado.
@@ -385,7 +385,7 @@ O local tem uma atmosfera de poder concentrado, e você sente uma presença impo
             }
         ]
     },
-    
+
     "decipher_temple_symbols": {
         "title": "Símbolos Revelados",
         "text": """Você examina cuidadosamente os entalhes nas colunas, e seu conhecimento acadêmico permite que você decifre parte do seu significado.
@@ -404,7 +404,7 @@ Você também descobre que este é um local de julgamento, onde disputas importa
             }
         ]
     },
-    
+
     "partial_temple_understanding": {
         "title": "Pistas Parciais",
         "text": """Você estuda os entalhes nas colunas, mas muitos dos símbolos são complexos demais para sua compreensão atual.
@@ -423,7 +423,7 @@ Uma coisa fica clara: este é um local de grande poder e significado para o povo
             }
         ]
     },
-    
+
     "temple_interior_informed": {
         "title": "Templo da Justiça",
         "text": """Com seu conhecimento aprimorado sobre o propósito deste templo, você entra com maior confiança.
@@ -446,7 +446,7 @@ Um homem idoso usando vestes elaboradas está de pé junto ao altar. Ele se vira
             }
         ]
     },
-    
+
     "approach_village": {
         "title": "Aproximação à Aldeia",
         "text": """Você decide que esconder-se não é a melhor abordagem e caminha abertamente em direção à aldeia. Enquanto se aproxima, várias pessoas notam sua presença e param o que estavam fazendo para observá-lo.
@@ -472,7 +472,7 @@ Um homem de meia-idade, usando vestes elaboradas e um colar de contas coloridas,
             }
         ]
     },
-    
+
     "approach_with_amulet": {
         "title": "O Amuleto Revelado",
         "text": """Com o conhecimento adquirido, você caminha confiante em direção à aldeia, o amuleto brilhando visivelmente em seu peito.
@@ -498,7 +498,7 @@ Um homem idoso com vestes elaboradas e um cajado ornamentado se aproxima de voc�
             }
         ]
     },
-    
+
     "examine_axe": {
         "title": "O Machado Sagrado",
         "text": """Você se aproxima do altar e examina cuidadosamente o machado cerimonial. É uma peça de artesanato extraordinária - um machado duplo de bronze polido com cabo ornamentado em madeira escura e detalhes em contas coloridas.
@@ -524,7 +524,7 @@ Um arrepio percorre sua espinha enquanto contempla o objeto. Este não é apenas
             }
         ]
     },
-    
+
     "study_murals_success": {
         "title": "Revelações nas Paredes",
         "text": """Você estuda atentamente os murais nas paredes e seu conhecimento cultural permite que você interprete a narrativa visual.
@@ -552,7 +552,7 @@ Um painel específico chama sua atenção - mostra Sango empunhando seu machado 
             }
         ]
     },
-    
+
     "study_murals_failure": {
         "title": "Imagens Enigmáticas",
         "text": """Você observa os murais nas paredes, mas os símbolos e cenas são complexos demais para interpretar completamente com seu conhecimento atual.
@@ -571,7 +571,7 @@ Uma imagem recorrente é a de um homem segurando um machado duplo, semelhante ao
             }
         ]
     },
-    
+
     "temple_respect": {
         "title": "Respeitando os Deuses",
         "text": """Sentindo a atmosfera sagrada do local, você decide mostrar respeito. Curva-se diante do altar e recua alguns passos.
@@ -594,7 +594,7 @@ Enquanto medita sobre a sensação, percebe uma presença atrás de você. Viran
             }
         ]
     },
-    
+
     "temple_exit": {
         "title": "Saindo do Templo",
         "text": """Você decide que já viu o suficiente e caminha em direção à saída do templo. À medida que se aproxima da entrada, ouve o som de passos atrás de você.
@@ -617,7 +617,7 @@ O homem o observa atentamente, como se pudesse ver além de sua aparência físi
             }
         ]
     },
-    
+
     "axe_touch_success": {
         "title": "Conexão com o Trovão",
         "text": """Com determinação, você estende a mão e toca o machado cerimonial. No instante em que seus dedos entram em contato com o metal, uma sensação eletrizante percorre seu corpo.
@@ -642,7 +642,7 @@ Algo também mudou dentro de você - uma conexão foi estabelecida. Você sente 
             }
         ]
     },
-    
+
     "axe_touch_failure": {
         "title": "A Ira do Trovão",
         "text": """Ao tocar o machado cerimonial, você sente imediatamente que cometeu um erro. Uma forte descarga elétrica percorre seu braço, lançando-o para trás com força. Você cai no chão, atordoado, com a visão embaçada.
@@ -654,7 +654,7 @@ Lutando para se levantar, você percebe que o machado continua intacto no altar,
         "victory_node": "guardian_defeated",
         "defeat_node": "temple_expulsion"
     },
-    
+
     "examine_offerings": {
         "title": "Oferendas Sagradas",
         "text": """Você examina cuidadosamente as oferendas dispostas no altar. Há frutas frescas, principalmente maçãs vermelhas e bananas; pequenas esculturas de madeira representando animais e pessoas; tigelas contendo o que parece ser mel, azeite de dendê e um tipo de bebida alcoólica.
@@ -680,7 +680,7 @@ Você reconhece estes como símbolos e itens tradicionais associados a Sango - o
             }
         ]
     },
-    
+
     "make_offering": {
         "title": "Oferenda Pessoal",
         "text": """Você procura entre seus pertences algo que possa servir como oferenda. De sua mochila, retira um pequeno item pessoal - talvez uma moeda de seu país, um lenço, ou outro objeto significativo.
@@ -699,7 +699,7 @@ Após alguns instantes, você percebe uma mudança sutil no ambiente. O ar parec
             }
         ]
     },
-    
+
     "examine_axe_blessed": {
         "title": "O Machado e a Bênção",
         "text": """Após sua oferenda ter sido aceita, você se aproxima do machado cerimonial com nova confiança. O objeto parece diferente agora - o metal brilha mais intensamente e o zumbido elétrico que emana dele é mais forte, mas não ameaçador.
@@ -718,7 +718,7 @@ Visões breves, mas nítidas, passam por sua mente: você vê padrões de tempes
             }
         ]
     },
-    
+
     "temple_exploration": {
         "title": "Explorando o Templo",
         "text": """Você decide explorar mais o templo de Sango. Além da sala principal com o altar, há diversos corredores e câmaras menores.
@@ -744,7 +744,7 @@ Ao entrar, descobre uma sala circular onde as paredes são cobertas por mapas es
             }
         ]
     },
-    
+
     "find_hidden_area": {
         "title": "A Câmara Secreta",
         "text": """Seu instinto o leva a investigar as paredes do templo. Observando atentamente, você nota uma sutil diferença na textura de uma seção da parede atrás de uma tapeçaria. Afastando o tecido, encontra uma pequena porta secreta.
@@ -770,7 +770,7 @@ A sala contém estantes com papiros e objetos antigos, e no centro há uma mesa 
             }
         ]
     },
-    
+
     "meet_priest": {
         "title": "O Sacerdote de Sango",
         "text": """O homem idoso se aproxima de você com passos deliberados. Suas vestes elaboradas são predominantemente vermelhas e brancas, decoradas com símbolos que representam raios e trovões. Ao redor de seu pescoço pende um colar de contas coloridas, e ele carrega um cajado ornamentado com símbolos esculpidos.
@@ -793,7 +793,7 @@ Seus olhos são perspicazes e parecem enxergar além de sua aparência física, 
             }
         ]
     },
-    
+
     "truth_to_priest": {
         "title": "Revelações ao Sacerdote",
         "text": """Você decide que a honestidade é o melhor caminho e conta sua história completa a Adewale - como você veio de outro tempo através do amuleto que tocou em uma escavação arqueológica.
@@ -818,7 +818,7 @@ Ele parece considerar algo por um momento antes de tomar uma decisão.""",
             }
         ]
     },
-    
+
     "ask_about_temple": {
         "title": "O Templo de Sango",
         "text": """Você pergunta a Adewale sobre o templo e seu significado. O sacerdote sorri, aparentemente satisfeito com seu interesse.
@@ -846,7 +846,7 @@ Adewale o observa com curiosidade. "Mas você não é daqui. Como veio parar em 
             }
         ]
     },
-    
+
     "ask_about_events": {
         "title": "Eventos Misteriosos",
         "text": """Você pergunta a Adewale sobre os estranhos eventos que tem testemunhado desde sua chegada - o portal, o amuleto, as visões, a capacidade de entender um idioma que nunca estudou.
@@ -873,7 +873,7 @@ Ele se aproxima mais de você. "Você deve me contar exatamente como chegou aqui
             }
         ]
     },
-    
+
     "ask_about_purpose": {
         "title": "O Propósito Divino",
         "text": """Você pergunta a Adewale qual poderia ser o propósito dos Òrìṣà ao trazê-lo para este tempo e lugar.
@@ -901,7 +901,7 @@ O sacerdote caminha lentamente até uma parede do templo onde há um mural elabo
             }
         ]
     },
-    
+
     "ask_help_return": {
         "title": "O Caminho de Volta",
         "text": """Você pergunta a Adewale se ele pode ajudá-lo a retornar ao seu próprio tempo. O sacerdote considera sua pergunta com seriedade.
@@ -929,7 +929,7 @@ O olhar de Adewale se torna distante, como se contemplasse algo além das parede
             }
         ]
     },
-    
+
     "learn_about_amulet": {
         "title": "Os Segredos do Amuleto",
         "text": """Você pede a Adewale para lhe ensinar mais sobre o Amuleto de Ashe e como utilizá-lo. O sacerdote faz um gesto para que você o siga até uma sala adjacente do templo.
@@ -957,7 +957,7 @@ Adewale se senta em uma esteira no chão e indica para que você faça o mesmo. 
             }
         ]
     },
-    
+
     "offer_help": {
         "title": "Oferecendo Assistência",
         "text": """Você diz a Adewale que está disposto a ajudar a resolver as perturbações mencionadas. O rosto do sacerdote se ilumina com um sorriso.
@@ -987,7 +987,7 @@ Ele olha gravemente para você. "Acredito que você foi enviado para nos ajudar 
             }
         ]
     },
-    
+
     "hero_mission": {
         "title": "A Missão do Herói",
         "text": """Você pergunta a Adewale como poderia ajudar a prevenir a catástrofe que ele teme estar se aproximando.
@@ -1016,7 +1016,7 @@ Uma responsabilidade enorme pesa sobre seus ombros enquanto você considera as p
             }
         ]
     },
-    
+
     "skeptical_response": {
         "title": "Dúvidas Razoáveis",
         "text": """Você expressa seu ceticismo quanto a ser algum tipo de escolhido profético. Afinal, você é apenas um pesquisador que tocou um artefato estranho e acabou em outro tempo - não um herói de lendas.
@@ -1045,7 +1045,7 @@ Adewale realiza um breve ritual, lançando pequenas conchas sobre o dispositivo.
             }
         ]
     },
-    
+
     "chaos_forces": {
         "title": "As Forças do Caos",
         "text": """Você pede a Adewale que explique mais sobre as forças do caos mencionadas na profecia. O sacerdote olha ao redor, como se verificando que estão sozinhos, antes de falar em voz mais baixa.
@@ -1073,7 +1073,7 @@ O sacerdote se vira para encará-lo com expressão grave. "Mas agora, três dos 
             }
         ]
     },
-    
+
     "artifacts_thief": {
         "title": "O Ladrão de Artefatos",
         "text": """Você pergunta a Adewale quem poderia estar roubando os artefatos sagrados. O sacerdote suspira profundamente, seu rosto mostrando uma mistura de raiva e tristeza.
@@ -1103,7 +1103,7 @@ O rosto de Adewale se endurece. "Ele já roubou a Espada de Ogun, o Cálice de Y
             }
         ]
     },
-    
+
     "recover_artifacts": {
         "title": "A Recuperação dos Artefatos",
         "text": """Você pergunta a Adewale como poderia ajudar a recuperar os artefatos roubados. O sacerdote parece aliviado com sua disposição.
@@ -1131,7 +1131,7 @@ Adewale olha para você com seriedade. "Recuperar todos os três antes do próxi
             }
         ]
     },
-    
+
     "fighting_ajoguns": {
         "title": "Combatendo as Entidades do Caos",
         "text": """Você pergunta se os Ajoguns podem ser combatidos diretamente, caso consigam invadir Yorùbáland. A expressão de Adewale se torna sombria.
@@ -1161,7 +1161,7 @@ Adewale guarda a adaga novamente. "Mas mesmo com tais armas, o combate direto se
             }
         ]
     },
-    
+
     "ask_about_thief": {
         "title": "O Inimigo Revelado",
         "text": """Você pergunta a Adewale quem poderia estar roubando os artefatos sagrados. O sacerdote fecha os olhos brevemente, como se a resposta lhe causasse dor.
@@ -1191,7 +1191,7 @@ Adewale se levanta e caminha até um pequeno nicho na parede, de onde retira um 
             }
         ]
     },
-    
+
     "accept_quest": {
         "title": "O Chamado da Aventura",
         "text": """Você toma sua decisão e diz a Adewale que está disposto a ajudar a recuperar os artefatos sagrados. O sacerdote sorri com aprovação.
@@ -1221,7 +1221,7 @@ Ele marca três locais no mapa com símbolos diferentes. "Não tenho como saber 
             }
         ]
     },
-    
+
     "adigun_location": {
         "title": "O Esconderijo do Inimigo",
         "text": """Você pergunta a Adewale se ele sabe onde Adigun poderia estar escondido. O sacerdote franze a testa, pensativo.
@@ -1251,7 +1251,7 @@ Ele olha para você com seriedade. "Confrontá-lo diretamente seria extremamente
             }
         ]
     },
-    
+
     "adigun_motives": {
         "title": "O Plano Sinistro",
         "text": """Você pergunta a Adewale por que Adigun desejaria liberar os Ajoguns, forças de destruição, em Yorùbáland. O sacerdote fecha os olhos brevemente, como se organizando pensamentos dolorosos.
@@ -1281,7 +1281,7 @@ Adewale caminha até uma janela e olha para o céu. "Durante seu exílio, encont
             }
         ]
     },
-    
+
     "iron_mountains_journey": {
         "title": "Jornada às Montanhas de Ferro",
         "text": """Você decide partir imediatamente para as Montanhas de Ferro. Adewale providencia mantimentos para sua jornada e um guia para levá-lo até os pés das montanhas.
@@ -1316,7 +1316,7 @@ Na manhã seguinte, você inicia sua subida pelas Montanhas de Ferro, cujos pico
             }
         ]
     },
-    
+
     "ask_about_allies": {
         "title": "Possíveis Aliados",
         "text": """Você pergunta a Adewale se haverá alguém para ajudá-lo em sua perigosa missão. O sacerdote considera a questão por um momento.
@@ -1346,7 +1346,7 @@ Adewale coloca uma mão em seu ombro. "Lembre-se: mesmo com aliados, a responsab
             }
         ]
     },
-    
+
     "other_priests": {
         "title": "Os Sacerdotes dos Quatro Templos",
         "text": """Você pergunta a Adewale se outros sacerdotes dos templos principais poderiam ajudar na missão. Seu rosto se entristece com a pergunta.
@@ -1374,7 +1374,7 @@ Adewale caminha até uma prateleira e retira três amuletos diferentes: um macha
             }
         ]
     },
-    
+
     "location_dangers": {
         "title": "Perigos nos Três Locais",
         "text": """Você pede a Adewale que detalhe os perigos específicos que poderá encontrar em cada um dos três locais. O sacerdote assente gravemente.
@@ -1402,7 +1402,7 @@ Ele faz uma pausa. "E, claro, em todos os três locais, Adigun provavelmente dei
             }
         ]
     },
-    
+
     "iron_pillars": {
         "title": "Os Pilares de Ferro",
         "text": """Após algumas horas de subida íngreme pela trilha montanhosa, você finalmente avista os dois pilares de pedra mencionados por Babatunde. São estruturas imponentes, com cerca de quatro metros de altura, esculpidas diretamente da rocha da montanha.
@@ -1427,7 +1427,7 @@ Enquanto contempla qual direção seguir, você nota que o amuleto em seu pesco�
             }
         ]
     },
-    
+
     "amulet_guidance_success": {
         "title": "A Orientação do Amuleto",
         "text": """Você para na trilha e segura o Amuleto de Ashe entre as mãos, concentrando-se em sua energia. Como Adewale explicou, você visualiza a Espada de Ogun, tentando estabelecer uma conexão mística entre os dois artefatos.
@@ -1454,7 +1454,7 @@ Com essa orientação sobrenatural, você poupou horas de caminhada e evitou pos
             }
         ]
     },
-    
+
     "amulet_guidance_failure": {
         "title": "A Conexão Incerta",
         "text": """Você segura o Amuleto de Ashe e tenta se concentrar, buscando estabelecer uma conexão com a Espada de Ogun. Fecha os olhos e visualiza o artefato perdido, tentando sentir sua presença nas montanhas.
@@ -1485,7 +1485,7 @@ Com um suspiro de resignação, você guarda o amuleto e decide seguir pelo cami
             }
         ]
     },
-    
+
     "blacksmith_valley": {
         "title": "O Vale dos Ferreiros",
         "text": """Você segue o caminho da esquerda, descendo por um vale rochoso de onde vem o som rítmico de marteladas. À medida que avança, o som se torna mais claro e variado - dezenas de martelos batendo em diferentes ritmos, criando uma estranha música metálica.
@@ -1515,7 +1515,7 @@ Uma figura mais alta que as outras, com elaborados detalhes decorativos em seu c
             }
         ]
     },
-    
+
     "furnace_passage": {
         "title": "A Passagem das Fornalhas",
         "text": """Você escolhe o caminho do meio, seguindo por uma passagem estreita entre formações rochosas que lembram enormes fornalhas. O ar fica mais quente à medida que você avança, e logo gotas de suor escorrem por seu rosto.
@@ -1545,7 +1545,7 @@ Ao redor da fonte, três figuras humanoides compostas inteiramente de lava se mo
             }
         ]
     },
-    
+
     "smoking_peaks": {
         "title": "Os Picos Fumegantes",
         "text": """Você segue o caminho da direita, subindo ainda mais alto nas Montanhas de Ferro, em direção à área onde fumaça escura emana do solo. A trilha se torna mais íngreme e irregular, com pedras soltas que tornam cada passo um potencial perigo.
@@ -1575,7 +1575,7 @@ A figura não se move enquanto você se aproxima, mas você tem a distinta impre
             }
         ]
     },
-    
+
     "notice_followers": {
         "title": "Olhos nas Sombras",
         "text": """Enquanto segue pela trilha montanhosa, você mantém seus sentidos alertas, constantemente observando o ambiente ao seu redor. O terreno acidentado oferece muitos lugares onde alguém poderia se esconder.
@@ -1608,7 +1608,7 @@ Em um breve momento quando o sol emerge entre as nuvens, você vê um símbolo n
             }
         ]
     },
-    
+
     "continue_unaware": {
         "title": "Uma Jornada Aparentemente Solitária",
         "text": """Você continua sua subida pelas Montanhas de Ferro, focado em encontrar o caminho para o templo. O terreno é desafiador, exigindo sua atenção constante - pedras soltas, passagens estreitas e ocasionais ventos fortes tornam cada passo uma consideração cuidadosa.
@@ -1643,7 +1643,7 @@ Três figuras emergem de trás das rochas, vestindo capas escuras com o símbolo
             }
         ]
     },
-    
+
     "end_victory": {
         "title": "A Salvação de Yorùbáland",
         "text": """Com o último artefato recuperado, você retorna triunfante ao Templo de Sango onde os sacerdotes dos quatro Òrìṣà se reuniram. O ritual de selamento é realizado sob a luz da lua cheia.
@@ -1657,7 +1657,7 @@ Antes de partir, você é honrado como herói e amigo do povo Yorùbá. Babajide
 Você atravessa o portal, retornando exatamente ao momento e local de onde partiu, mas com conhecimentos e experiências que transformaram sua vida para sempre.""",
         "end": True
     },
-    
+
     "end_emperor": {
         "title": "O Novo Imperador",
         "text": """Depois de derrotar Adigun e salvar Yorùbáland, você decide permanecer no passado. Seu conhecimento do futuro, combinado com a sabedoria que adquiriu em sua jornada, torna você um conselheiro inestimável para o rei.
@@ -1669,7 +1669,7 @@ Sob seu reinado, Yorùbáland prospera. Você introduz avanços médicos e agrí
 Os historiadores do futuro, séculos depois, encontrarão referências a um governante misterioso e poderoso, que veio de terras distantes e trouxe uma era de ouro para a civilização Yorùbá - sem nunca saber que estavam falando de você.""",
         "end": True
     },
-    
+
     "end_tragic": {
         "title": "O Preço do Fracasso",
         "text": """Apesar de seus esforços, você não consegue impedir Adigun de completar seu ritual. Com os quatro artefatos sagrados, ele abre um portal entre os mundos, permitindo que forças caóticas entrem em Yorùbáland.
