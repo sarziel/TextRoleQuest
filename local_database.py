@@ -32,12 +32,13 @@ def save_json(file_path, data):
         json.dump(data, f, indent=2, default=str)
 
 # Admin operations
-def create_admin(username, password_hash):
+def create_admin(admin_data):
     """Create a new admin"""
     admins = load_json(ADMIN_FILE, {})
+    username = admin_data['username']
     if username not in admins:
         admins[username] = {
-            'password_hash': password_hash,
+            'password_hash': admin_data['password_hash'],
             'created_at': datetime.utcnow(),
             'last_login': None
         }
@@ -49,6 +50,16 @@ def get_admin(username):
     """Get admin by username"""
     admins = load_json(ADMIN_FILE, {})
     return admins.get(username)
+
+def get_admin_by_username(username):
+    """Get admin by username"""
+    admins = load_json(ADMIN_FILE, {})
+    if username in admins:
+        admin_data = admins[username]
+        admin_data['username'] = username
+        admin_data['id'] = username  # Usando username como ID
+        return admin_data
+    return None
 
 def update_admin_login(username):
     """Update admin's last login"""
