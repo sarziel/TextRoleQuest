@@ -59,8 +59,8 @@ def get_random_node_id(node_type=None):
 
 def verify_node_connections():
     """
-    Verifica se todos os nós estão conectados corretamente e alcançáveis.
-    Retorna uma tupla de (is_valid, list of issues)
+    Verify that all nodes are properly connected and reachable.
+    Returns a tuple of (is_valid, list of issues)
     """
     issues = []
     reachable_nodes = set()
