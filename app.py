@@ -16,13 +16,20 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
-    # Modificar URL para desativar SSL se necessário
+    # Modificar URL para PostgreSQL
     database_url = database_url.replace('postgres://', 'postgresql://')
+    # Desativar SSL para evitar problemas de conexão
     if '?' not in database_url:
-        database_url += '?sslmode=require'
+        database_url += '?sslmode=prefer'
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,    # verifica a conexão antes de usá-la
+    "pool_recycle": 280,      # recicla conexões a cada ~4.5 minutos
+    "pool_timeout": 10,       # tempo de espera para obter uma conexão 
+    "max_overflow": 15        # conexões extras além do tamanho do pool
+}
 
 # Import and initialize database
 from models import db, Admin, Character, NodeVisit
@@ -66,13 +73,14 @@ def create_admin_command():
 
 # Em versões mais recentes do Flask, before_first_request foi removido
 # Vamos usar uma função que será chamada na primeira requisição
-with app.app_context():
-    try:
+try:
+    with app.app_context():
         # Tentar criar o banco de dados e o usuário admin na inicialização
         db.create_all()
         create_admin_user()
-    except Exception as e:
-        print(f"Erro na inicialização do banco de dados: {e}")
+except Exception as e:
+    print(f"Erro na inicialização do banco de dados: {e}")
+    # Não vamos interromper a aplicação por causa disso
 
 # Admin authentication decorator
 def admin_required(f):
@@ -87,7 +95,12 @@ def admin_required(f):
 @app.route('/')
 def index():
     """Main index page"""
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        # Log error but still return the page to avoid breaking navigation
+        print(f"Erro na página inicial: {e}")
+        return render_template('index.html')
     
 @app.route('/admin-info')
 def admin_info():
@@ -133,7 +146,12 @@ import game_data
 @app.route('/play')
 def play_game():
     """Play the RPG game page"""
-    return render_template('play.html')
+    try:
+        return render_template('play.html')
+    except Exception as e:
+        print(f"Erro na página de jogo: {e}")
+        # Falhar de maneira resiliente, tentar renderizar uma versão simplificada
+        return render_template('index.html')
 
 @app.route('/create_character', methods=['GET', 'POST'])
 def create_character():

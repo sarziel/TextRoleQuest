@@ -1347,6 +1347,303 @@ Adewale coloca uma mão em seu ombro. "Lembre-se: mesmo com aliados, a responsab
         ]
     },
     
+    "other_priests": {
+        "title": "Os Sacerdotes dos Quatro Templos",
+        "text": """Você pergunta a Adewale se outros sacerdotes dos templos principais poderiam ajudar na missão. Seu rosto se entristece com a pergunta.
+
+"Os sumos sacerdotes de Ogun, Yemoja e Osun foram capturados por Adigun quando ele roubou os artefatos," ele explica. "Acreditamos que estejam mantidos prisioneiros, forçados a auxiliar em seus rituais por seu conhecimento único."
+
+Adewale caminha até uma prateleira e retira três amuletos diferentes: um machado miniatura, uma concha prateada e um espelho do tamanho de sua palma. "Estes são símbolos de nossos irmãos desaparecidos. Se você os encontrar, mostre-lhes estes símbolos. Eles saberão que você vem em nome do Conselho dos Sacerdotes."
+
+"Quase todos os outros sacerdotes estão em seus respectivos templos, reforçando as proteções espirituais que ainda restam. Se abandonassem seus postos, as barreiras entre os mundos ficariam ainda mais fracas." Ele guarda os amuletos em uma pequena bolsa e a entrega a você.
+
+"Esta é uma das razões pelas quais sua chegada é tão significativa. Um estrangeiro, não vinculado à proteção de nenhum templo específico, mas capaz de manejar o Amuleto de Ashe... os Òrìṣà certamente guiaram sua vinda."
+""",
+        "choices": [
+            {
+                "text": "Prometer encontrar e libertar os sacerdotes capturados",
+                "next_node": "promise_rescue"
+            },
+            {
+                "text": "Perguntar como reconhecerá os sacerdotes cativos",
+                "next_node": "identify_priests"
+            },
+            {
+                "text": "Agradecer pela informação e partir para as Montanhas de Ferro",
+                "next_node": "iron_mountains_journey"
+            }
+        ]
+    },
+    
+    "location_dangers": {
+        "title": "Perigos nos Três Locais",
+        "text": """Você pede a Adewale que detalhe os perigos específicos que poderá encontrar em cada um dos três locais. O sacerdote assente gravemente.
+
+"As Montanhas de Ferro são habitadas por espíritos de mineradores ancestrais," ele começa. "Eles testam qualquer um que busque as bênçãos de Ogun. Além disso, há criaturas feitas de metal vivo - guardiões forjados pelo próprio Ogun para proteger seu santuário. Desde que Adigun roubou a Espada, esses guardiões se tornaram hostis a todos os visitantes."
+
+Adewale desenha um símbolo no ar. "No Lago da Lua, as águas são habitadas por sereias que servem a Yemoja. Normalmente, elas guiam os viajantes dignos, mas com o roubo do Cálice, estão enfurecidas e desconfiadas. O próprio lago agora é perigoso - suas águas podem induzir visões e pesadelos que consomem a mente dos incautos."
+
+"A Floresta dos Sussurros é talvez o mais perigoso dos três," ele continua com voz baixa. "É o domínio de Osun, onde a linha entre realidade e ilusão é tênue. Há árvores que se movem, caminhos que mudam, e espíritos que assumem formas familiares para enganar viajantes. Desde o roubo do Espelho, a floresta se tornou particularmente traiçoeira - as ilusões agora podem ser mortais."
+
+Ele faz uma pausa. "E, claro, em todos os três locais, Adigun provavelmente deixou seguidores e proteções mágicas para impedir que os artefatos sejam recuperados."
+""",
+        "choices": [
+            {
+                "text": "Perguntar como superar esses perigos específicos",
+                "next_node": "danger_solutions"
+            },
+            {
+                "text": "Pedir itens ou proteções adicionais para cada lugar",
+                "next_node": "request_protections"
+            },
+            {
+                "text": "Agradecer pelo aviso e partir para as Montanhas de Ferro",
+                "next_node": "iron_mountains_journey"
+            }
+        ]
+    },
+    
+    "iron_pillars": {
+        "title": "Os Pilares de Ferro",
+        "text": """Após algumas horas de subida íngreme pela trilha montanhosa, você finalmente avista os dois pilares de pedra mencionados por Babatunde. São estruturas imponentes, com cerca de quatro metros de altura, esculpidas diretamente da rocha da montanha.
+
+Os pilares estão cobertos de símbolos antigos e, à medida que você se aproxima, percebe que não são de pedra comum - veios de metal brilhante permeiam a rocha, formando padrões que lembram ferramentas e armas. Entre os pilares, a trilha se divide em três caminhos diferentes.
+
+O caminho da esquerda desce por um vale rochoso, com o som distante de marteladas ecoando. O caminho do meio segue por uma passagem estreita entre formações rochosas que se assemelham a fornalhas. O caminho da direita sobe ainda mais, em direção a uma área onde fumaça escura parece emanar do próprio solo.
+
+Enquanto contempla qual direção seguir, você nota que o amuleto em seu pescoço começou a emitir um suave calor. Tocando-o, sente vibrações diferentes quando o aponta para cada um dos três caminhos.""",
+        "choices": [
+            {
+                "text": "Seguir o caminho da esquerda, em direção ao som de marteladas",
+                "next_node": "blacksmith_valley"
+            },
+            {
+                "text": "Tomar o caminho do meio, através das formações rochosas",
+                "next_node": "furnace_passage"
+            },
+            {
+                "text": "Subir pelo caminho da direita, em direção à fumaça",
+                "next_node": "smoking_peaks"
+            }
+        ]
+    },
+    
+    "amulet_guidance_success": {
+        "title": "A Orientação do Amuleto",
+        "text": """Você para na trilha e segura o Amuleto de Ashe entre as mãos, concentrando-se em sua energia. Como Adewale explicou, você visualiza a Espada de Ogun, tentando estabelecer uma conexão mística entre os dois artefatos.
+
+Por um momento, nada acontece. Então, lentamente, o amuleto começa a aquecer em suas mãos. A pedra azul em seu centro emite um brilho suave que pulsa como um batimento cardíaco. Você sente uma suave atração - o amuleto parece querer puxá-lo em uma direção específica.
+
+Quando você se move ligeiramente para a direita da trilha, o pulsar se intensifica. Seguindo essa indicação, você descobre um caminho quase imperceptível entre as rochas, muito mais direto que a trilha principal.
+
+O novo caminho é íngreme e desafiador, mas à medida que avança, o amuleto pulsa com mais força. Após cerca de uma hora de caminhada por este atalho, você chega a uma clareira onde dois enormes pilares de pedra se erguem, marcando a entrada para o coração das Montanhas de Ferro.
+
+Com essa orientação sobrenatural, você poupou horas de caminhada e evitou possíveis perigos na trilha principal.""",
+        "choices": [
+            {
+                "text": "Examinar os pilares de pedra",
+                "next_node": "iron_pillars"
+            },
+            {
+                "text": "Continuar seguindo a orientação do amuleto além dos pilares",
+                "next_node": "direct_to_temple"
+            },
+            {
+                "text": "Parar para descansar e meditar sobre a conexão com o amuleto",
+                "next_node": "amulet_meditation"
+            }
+        ]
+    },
+    
+    "amulet_guidance_failure": {
+        "title": "A Conexão Incerta",
+        "text": """Você segura o Amuleto de Ashe e tenta se concentrar, buscando estabelecer uma conexão com a Espada de Ogun. Fecha os olhos e visualiza o artefato perdido, tentando sentir sua presença nas montanhas.
+
+Infelizmente, nada parece acontecer. O amuleto permanece frio e inerte em suas mãos. Você tenta diferentes abordagens - mudar sua posição, ajustar seu foco mental, até mesmo murmurar palavras de respeito aos Òrìṣà - mas a conexão não se estabelece.
+
+Após várias tentativas frustradas, você percebe que pode não estar pronto para usar o amuleto dessa forma. Talvez seja necessário mais treinamento ou um vínculo mais profundo com o artefato. Ou talvez haja alguma interferência nas montanhas que dificulte a comunicação mística.
+
+Com um suspiro de resignação, você guarda o amuleto e decide seguir pelo caminho convencional. A trilha serpenteia montanha acima, tornando-se cada vez mais íngreme e rochosa. Após várias horas de caminhada exaustiva, você finalmente avista dois grandes pilares de pedra marcando uma encruzilhada.""",
+        "choices": [
+            {
+                "text": "Examinar os pilares de pedra",
+                "next_node": "iron_pillars"
+            },
+            {
+                "text": "Tentar novamente usar o amuleto agora que está mais próximo",
+                "test": "spiritual",
+                "difficulty": 10,
+                "success_node": "second_attempt_success",
+                "failure_node": "still_no_connection"
+            },
+            {
+                "text": "Procurar sinais ou marcações no caminho que possam indicar a direção",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "find_hidden_markers",
+                "failure_node": "no_visible_signs"
+            }
+        ]
+    },
+    
+    "blacksmith_valley": {
+        "title": "O Vale dos Ferreiros",
+        "text": """Você segue o caminho da esquerda, descendo por um vale rochoso de onde vem o som rítmico de marteladas. À medida que avança, o som se torna mais claro e variado - dezenas de martelos batendo em diferentes ritmos, criando uma estranha música metálica.
+
+O vale se abre em uma área ampla, pontilhada por forjas a céu aberto. Para sua surpresa, nenhuma delas é operada por seres humanos. Figuras humanoides feitas inteiramente de metal - algumas de ferro bruto, outras de aço polido - trabalham incansavelmente, martelando, moldando e temperando metal.
+
+Os ferreiros metálicos parecem ignorar sua presença inicialmente. Você observa, fascinado, enquanto eles criam ferramentas, armas e objetos decorativos com habilidade sobre-humana. Alguns deles têm expressões faciais rudimentares forjadas em suas faces metálicas.
+
+Quando você dá mais alguns passos para dentro do vale, porém, todos param simultaneamente. Dezenas de cabeças metálicas se viram em sua direção, olhos vazios fixos em você. Um silêncio tenso substitui a sinfonia de marteladas.
+
+Uma figura mais alta que as outras, com elaborados detalhes decorativos em seu corpo metálico, se aproxima. "Quem ousa entrar no Vale de Ogun?" pergunta com uma voz que soa como metal raspando em metal.""",
+        "choices": [
+            {
+                "text": "Mostrar o pequeno martelo de ferreiro que recebeu como símbolo",
+                "next_node": "show_hammer_symbol"
+            },
+            {
+                "text": "Explicar que busca a Espada de Ogun roubada",
+                "next_node": "explain_quest"
+            },
+            {
+                "text": "Tentar impressionar o ferreiro metálico com seu conhecimento de metalurgia",
+                "test": "mental",
+                "difficulty": 14,
+                "success_node": "impress_smiths",
+                "failure_node": "fail_to_impress"
+            }
+        ]
+    },
+    
+    "furnace_passage": {
+        "title": "A Passagem das Fornalhas",
+        "text": """Você escolhe o caminho do meio, seguindo por uma passagem estreita entre formações rochosas que lembram enormes fornalhas. O ar fica mais quente à medida que você avança, e logo gotas de suor escorrem por seu rosto.
+
+As paredes de rocha ao seu redor parecem pulsar com um brilho alaranjado, como se magma corresse por veias ocultas. O chão sob seus pés torna-se desconfortavelmente quente, e você precisa andar mais rápido para evitar que suas sandálias comecem a fumegar.
+
+A passagem se estreita ainda mais, forçando-o a virar de lado em alguns pontos para conseguir passar. O calor se torna quase insuportável, e você começa a questionar sua escolha de caminho.
+
+Finalmente, a passagem se abre em uma caverna circular onde o ar é surpreendentemente respirável, embora ainda quente. No centro da caverna há uma fonte de lava que jorra de uma fissura no chão, subindo alguns metros antes de cair de volta em um poço perfeitamente circular.
+
+Ao redor da fonte, três figuras humanoides compostas inteiramente de lava se movem em um padrão circular, como se executassem uma dança lenta. A cada movimento, gotas de lava caem de seus corpos e solidificam no chão, formando padrões complexos.""",
+        "choices": [
+            {
+                "text": "Observar a dança à distância para entender seu significado",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "understand_fire_dance",
+                "failure_node": "miss_dance_meaning"
+            },
+            {
+                "text": "Aproximar-se cuidadosamente da fonte de lava",
+                "next_node": "approach_lava_font"
+            },
+            {
+                "text": "Tentar comunicar-se com as criaturas de lava",
+                "next_node": "address_lava_beings"
+            }
+        ]
+    },
+    
+    "smoking_peaks": {
+        "title": "Os Picos Fumegantes",
+        "text": """Você segue o caminho da direita, subindo ainda mais alto nas Montanhas de Ferro, em direção à área onde fumaça escura emana do solo. A trilha se torna mais íngreme e irregular, com pedras soltas que tornam cada passo um potencial perigo.
+
+O ar fica mais rarefeito com a altitude, e a respiração se torna um pouco mais difícil. Misturado ao ar já escasso está um cheiro forte de enxofre que emana das fissuras no solo. Pequenas nuvens de fumaça cinza-escura escapam destas rachaduras, formando padrões fantasmagóricos no ar.
+
+Após quase uma hora de subida extenuante, você chega a um platô elevado. O chão aqui é coberto por uma fina camada de cinzas, e grandes rachaduras atravessam a superfície. De algumas destas fendas, colunas mais substanciais de fumaça se elevam em direção ao céu.
+
+No centro do platô, uma figura solitária está sentada em posição de meditação. Para sua surpresa, o ser parece ser feito inteiramente de metal escurecido pelo fogo. Seu corpo é coberto por gravuras complexas e símbolos que lembram aqueles que você viu no Templo de Sango.
+
+A figura não se move enquanto você se aproxima, mas você tem a distinta impressão de que está plenamente ciente de sua presença.""",
+        "choices": [
+            {
+                "text": "Aproximar-se respeitosamente e cumprimentar a figura",
+                "next_node": "greet_smoking_figure"
+            },
+            {
+                "text": "Observar à distância e estudar os símbolos gravados na figura",
+                "test": "mental",
+                "difficulty": 13,
+                "success_node": "decipher_metal_runes",
+                "failure_node": "puzzling_symbols"
+            },
+            {
+                "text": "Perguntar sobre a Espada de Ogun",
+                "next_node": "ask_about_sword"
+            }
+        ]
+    },
+    
+    "notice_followers": {
+        "title": "Olhos nas Sombras",
+        "text": """Enquanto segue pela trilha montanhosa, você mantém seus sentidos alertas, constantemente observando o ambiente ao seu redor. O terreno acidentado oferece muitos lugares onde alguém poderia se esconder.
+
+Não demora muito para que seus esforços sejam recompensados. Um movimento sutil entre as rochas - quase imperceptível - atrai sua atenção. Fingindo ajustar seu calçado, você se posiciona para observar melhor sem alertar quem quer que esteja lá.
+
+Com o canto do olho, você percebe ao menos três figuras seguindo seus passos à distância. Eles usam capas escuras que se misturam com as sombras das rochas e se movem com a cautela de predadores. Estão claramente treinados em seguir pessoas sem serem notados.
+
+As figuras parecem manter uma distância constante - próximas o suficiente para não perderem você de vista, mas longe o bastante para reagirem caso sejam descobertas. Seus movimentos são coordenados, sugerindo que trabalham juntos.
+
+Em um breve momento quando o sol emerge entre as nuvens, você vê um símbolo nas capas de um deles - um círculo com uma linha diagonal, o mesmo símbolo que Adewale mencionou como sendo utilizado pelos seguidores de Adigun.""",
+        "choices": [
+            {
+                "text": "Continuar normalmente, fingindo não tê-los notado",
+                "next_node": "feign_ignorance"
+            },
+            {
+                "text": "Preparar uma emboscada para seus perseguidores",
+                "test": "physical",
+                "difficulty": 14,
+                "success_node": "successful_ambush",
+                "failure_node": "ambush_backfires"
+            },
+            {
+                "text": "Tentar despistá-los usando o terreno montanhoso",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "lose_followers",
+                "failure_node": "still_following"
+            }
+        ]
+    },
+    
+    "continue_unaware": {
+        "title": "Uma Jornada Aparentemente Solitária",
+        "text": """Você continua sua subida pelas Montanhas de Ferro, focado em encontrar o caminho para o templo. O terreno é desafiador, exigindo sua atenção constante - pedras soltas, passagens estreitas e ocasionais ventos fortes tornam cada passo uma consideração cuidadosa.
+
+O som de pedras ocasionalmente caindo atrás de você parece natural neste ambiente instável. Os pássaros que levantam voo repentinamente das rochas acima provavelmente estão apenas assustados com sua presença. A sensação de ser observado, você atribui ao aspecto místico deste lugar sagrado.
+
+Após algumas horas de caminhada, você finalmente avista os dois pilares de pedra que Babatunde mencionou. Enquanto se aproxima deles, ouve claramente o som de passos atrás de você. Antes que possa se virar, uma voz áspera ordena:
+
+"Não se mova, estrangeiro. E não tente nada estúpido."
+
+Três figuras emergem de trás das rochas, vestindo capas escuras com o símbolo de um círculo cortado por uma linha diagonal - o símbolo dos seguidores de Adigun. Dois deles têm adagas curvas em mãos, enquanto o terceiro segura algo que parece ser um saco de tecido.
+
+"Sabemos por que está aqui," diz um deles. "O mestre Adigun não aprecia intromissões."
+""",
+        "choices": [
+            {
+                "text": "Tentar dialogar e descobrir mais informações",
+                "next_node": "negotiate_with_followers"
+            },
+            {
+                "text": "Atacar rapidamente antes que eles tomem a iniciativa",
+                "battle": "adigun_followers",
+                "victory_node": "defeat_followers",
+                "defeat_node": "captured_by_followers"
+            },
+            {
+                "text": "Usar o Amuleto de Ashe para intimidá-los",
+                "test": "spiritual",
+                "difficulty": 13,
+                "success_node": "amulet_intimidation",
+                "failure_node": "amulet_fails"
+            }
+        ]
+    },
+    
     "end_victory": {
         "title": "A Salvação de Yorùbáland",
         "text": """Com o último artefato recuperado, você retorna triunfante ao Templo de Sango onde os sacerdotes dos quatro Òrìṣà se reuniram. O ritual de selamento é realizado sob a luz da lua cheia.
