@@ -26,152 +26,213 @@
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0 text-white">Visualização do Fluxo</h5>
             <div class="btn-group">
-                <button class="btn btn-outline-light btn-sm active" onclick="toggleNodes('all')">Todos</button>
-                <button class="btn btn-outline-light btn-sm" onclick="toggleNodes('battle')">Batalhas</button>
-                <button class="btn btn-outline-light btn-sm" onclick="toggleNodes('choice')">Escolhas</button>
-                <button class="btn btn-outline-light btn-sm" onclick="toggleNodes('end')">Finais</button>
+                <button class="btn btn-outline-light btn-sm active" onclick="toggleFilter('all')">Todos</button>
+                <button class="btn btn-outline-light btn-sm" onclick="toggleFilter('battle')">Batalhas</button>
+                <button class="btn btn-outline-light btn-sm" onclick="toggleFilter('choice')">Escolhas</button>
+                <button class="btn btn-outline-light btn-sm" onclick="toggleFilter('end')">Finais</button>
             </div>
         </div>
     </div>
     <div class="card-body">
-        <div id="flowchart" class="mermaid"></div>
+        <canvas id="flowchart" width="1200" height="800"></canvas>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>
-    mermaid.initialize({ 
-        startOnLoad: true,
-        theme: 'dark',
-        flowchart: {
-            curve: 'linear',
-            htmlLabels: true,
-            nodeSpacing: 60,
-            rankSpacing: 60,
-            padding: 10
+    const nodes = {{ nodes|tojson|safe }};
+    let canvas, ctx;
+    let scale = 1;
+    let offsetX = 0, offsetY = 0;
+    let filter = 'all';
+    
+    class Node {
+        constructor(id, data, x, y) {
+            this.id = id;
+            this.data = data;
+            this.x = x;
+            this.y = y;
+            this.width = 150;
+            this.height = 80;
         }
-    });
 
-    let currentScale = 1;
-    const flowchart = document.getElementById('flowchart');
-    
-    document.getElementById('zoomIn').onclick = () => {
-        currentScale *= 1.2;
-        flowchart.style.transform = `scale(${currentScale})`;
-    };
-    
-    document.getElementById('zoomOut').onclick = () => {
-        currentScale *= 0.8;
-        flowchart.style.transform = `scale(${currentScale})`;
-    };
-    
-    document.getElementById('resetZoom').onclick = () => {
-        currentScale = 1;
-        flowchart.style.transform = `scale(${currentScale})`;
-    };
+        draw(ctx) {
+            if (filter !== 'all') {
+                if (filter === 'battle' && !this.data.battle) return;
+                if (filter === 'choice' && !this.data.choices) return;
+                if (filter === 'end' && !this.data.end) return;
+            }
 
-    function generateFlowchart() {
-        let nodes = {{ nodes|tojson|safe }};
-        let flowDef = ['graph TD'];
-        
-        // Definir estilos
-        flowDef.push('    classDef battle fill:#ff6b6b,stroke:#ff6b6b,color:#fff');
-        flowDef.push('    classDef end fill:#51cf66,stroke:#51cf66,color:#fff');
-        flowDef.push('    classDef choice fill:#339af0,stroke:#339af0,color:#fff');
-        flowDef.push('    classDef default fill:#495057,stroke:#495057,color:#fff');
-        
-        function escapeNodeText(text) {
-            return text.replace(/[<>"]/g, '_');
-        }
-        
-        // Adicionar nós
-        for (let [nodeId, node] of Object.entries(nodes)) {
-            let nodeClass = '';
-            let safeNodeId = nodeId.replace(/[^a-zA-Z0-9]/g, '_');
-            let displayTitle = node.title ? `${nodeId}\\n${escapeNodeText(node.title)}` : nodeId;
-            let nodeTitle = `${safeNodeId}["${displayTitle}"]`;
+            ctx.save();
+            ctx.fillStyle = this.getColor();
+            ctx.strokeStyle = this.getColor();
+            ctx.lineWidth = 2;
             
-            if (node.battle) nodeClass = ':::battle';
-            else if (node.end) nodeClass = ':::end';
-            else if (node.choices) nodeClass = ':::choice';
-            
-            flowDef.push(`    ${nodeTitle}${nodeClass}`);
-            
-            // Adicionar conexões
-            if (node.choices) {
-                node.choices.forEach((choice, idx) => {
-                    let targetNode = choice.next_node || choice.success_node;
-                    if (targetNode) {
-                        let safeTargetId = targetNode.replace(/[^a-zA-Z0-9]/g, '_');
-                        let choiceText = escapeNodeText(choice.text.substring(0, 20)) + 
-                            (choice.text.length > 20 ? '...' : '');
-                        flowDef.push(`    ${safeNodeId} -->|${choiceText}| ${safeTargetId}`);
-                    }
-                    if (choice.failure_node) {
-                        let safeFailureId = choice.failure_node.replace(/[^a-zA-Z0-9]/g, '_');
-                        flowDef.push(`    ${safeNodeId} -->|"Falha"| ${safeFailureId}`);
-                    }
-                });
-            }
-            if (node.next_node) {
-                let safeNextId = node.next_node.replace(/[^a-zA-Z0-9]/g, '_');
-                flowDef.push(`    ${safeNodeId} --> ${safeNextId}`);
-            }
-            if (node.victory_node) {
-                let safeVictoryId = node.victory_node.replace(/[^a-zA-Z0-9]/g, '_');
-                flowDef.push(`    ${safeNodeId} -->|"Vitória"| ${safeVictoryId}`);
-            }
-            if (node.defeat_node) {
-                let safeDefeatId = node.defeat_node.replace(/[^a-zA-Z0-9]/g, '_');
-                flowDef.push(`    ${safeNodeId} -->|"Derrota"| ${safeDefeatId}`);
+            // Draw node box
+            ctx.beginPath();
+            ctx.roundRect(this.x, this.y, this.width, this.height, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw text
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(this.id, this.x + this.width/2, this.y + 20);
+            if (this.data.title) {
+                ctx.fillText(this.data.title.substring(0, 20), this.x + this.width/2, this.y + 40);
             }
         }
-        
-        return flowDef.join('\n');
+
+        getColor() {
+            if (this.data.battle) return '#ff6b6b';
+            if (this.data.end) return '#51cf66';
+            if (this.data.choices) return '#339af0';
+            return '#495057';
+        }
     }
 
-    function toggleNodes(type) {
-        const diagram = document.querySelector('.mermaid');
-        let nodes = diagram.querySelectorAll('g.node');
-        
-        nodes.forEach(node => {
-            if (type === 'all') {
-                node.style.display = 'block';
-                return;
+    function drawArrow(ctx, fromX, fromY, toX, toY, text) {
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        // Arrow head
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - 10 * Math.cos(angle - Math.PI/6), toY - 10 * Math.sin(angle - Math.PI/6));
+        ctx.lineTo(toX - 10 * Math.cos(angle + Math.PI/6), toY - 10 * Math.sin(angle + Math.PI/6));
+        ctx.closePath();
+        ctx.fill();
+
+        // Connection text
+        if (text) {
+            ctx.save();
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            const midX = (fromX + toX) / 2;
+            const midY = (fromY + toY) / 2;
+            ctx.fillText(text, midX, midY - 5);
+            ctx.restore();
+        }
+    }
+
+    function initializeFlowchart() {
+        canvas = document.getElementById('flowchart');
+        ctx = canvas.getContext('2d');
+
+        // Create node objects
+        const nodeObjects = [];
+        let x = 50, y = 50;
+        Object.entries(nodes).forEach(([id, data], index) => {
+            if (index > 0 && index % 5 === 0) {
+                y += 150;
+                x = 50;
             }
+            nodeObjects.push(new Node(id, data, x, y));
+            x += 200;
+        });
+
+        function render() {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            let nodeClass = node.getAttribute('class');
-            if (type === 'battle' && nodeClass.includes('battle')) {
-                node.style.display = node.style.display === 'none' ? 'block' : 'none';
-            } else if (type === 'choice' && nodeClass.includes('choice')) {
-                node.style.display = node.style.display === 'none' ? 'block' : 'none';
-            } else if (type === 'end' && nodeClass.includes('end')) {
-                node.style.display = node.style.display === 'none' ? 'block' : 'none';
+            // Apply transformations
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+
+            // Draw connections
+            ctx.strokeStyle = '#fff';
+            nodeObjects.forEach(node => {
+                if (node.data.next_node) {
+                    const targetNode = nodeObjects.find(n => n.id === node.data.next_node);
+                    if (targetNode) {
+                        drawArrow(ctx, 
+                            node.x + node.width, node.y + node.height/2,
+                            targetNode.x, targetNode.y + targetNode.height/2);
+                    }
+                }
+                if (node.data.choices) {
+                    node.data.choices.forEach(choice => {
+                        const targetNode = nodeObjects.find(n => n.id === choice.next_node);
+                        if (targetNode) {
+                            drawArrow(ctx,
+                                node.x + node.width, node.y + node.height/2,
+                                targetNode.x, targetNode.y + targetNode.height/2,
+                                choice.text.substring(0, 15) + '...');
+                        }
+                    });
+                }
+            });
+
+            // Draw nodes
+            nodeObjects.forEach(node => node.draw(ctx));
+            
+            ctx.restore();
+        }
+
+        // Controls
+        document.getElementById('zoomIn').onclick = () => {
+            scale *= 1.2;
+            render();
+        };
+        
+        document.getElementById('zoomOut').onclick = () => {
+            scale *= 0.8;
+            render();
+        };
+        
+        document.getElementById('resetZoom').onclick = () => {
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            render();
+        };
+
+        // Pan functionality
+        let isDragging = false;
+        let startX, startY;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - offsetX;
+            startY = e.clientY - offsetY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                offsetX = e.clientX - startX;
+                offsetY = e.clientY - startY;
+                render();
             }
         });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Initial render
+        render();
+
+        // Export toggle function
+        window.toggleFilter = function(newFilter) {
+            filter = newFilter;
+            render();
+        };
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const flowchartDiv = document.getElementById('flowchart');
-        flowchartDiv.textContent = generateFlowchart();
-    });
+    document.addEventListener('DOMContentLoaded', initializeFlowchart);
 </script>
 
 <style>
     #flowchart {
         width: 100%;
-        min-height: 800px;
-        transform-origin: top left;
-        transition: transform 0.2s;
-        overflow: auto;
-    }
-    
-    .mermaid {
+        height: 800px;
         background: #212529;
-        padding: 20px;
-        border-radius: 8px;
     }
 
     .btn-group .btn.active {
