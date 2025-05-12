@@ -31,7 +31,8 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "max_overflow": 15        # conexões extras além do tamanho do pool
 }
 
-# Import and initialize database
+# Import database models and initialize
+from models import db
 from database import init_db, create_admin, get_admin, create_character, get_character
 from database import update_character, record_node_visit, get_node_visits, get_character_visits, get_all_characters
 db.init_app(app)
