@@ -22,6 +22,11 @@
                     <div>
                         <h5 class="card-title">Nós</h5>
                         <h2 class="mb-0">{{ node_count }}</h2>
+                        {% if nodes_valid %}
+                        <span class="badge bg-success">Todos conectados</span>
+                        {% else %}
+                        <span class="badge bg-danger">Problemas encontrados</span>
+                        {% endif %}
                     </div>
                     <div class="stats-icon">
                         <i class="bi bi-diagram-3"></i>

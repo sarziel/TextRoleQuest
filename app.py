@@ -572,8 +572,9 @@ def admin_logout():
 @admin_required
 def admin_dashboard():
     """Admin dashboard"""
-    # Count nodes
+    # Count nodes and verify connections
     node_count = node_map.count_nodes()
+    nodes_valid, node_issues = node_map.verify_node_connections()
 
     # Count characters
     character_count = db.count_characters()
