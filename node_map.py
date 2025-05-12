@@ -55,81 +55,6 @@ def get_random_node_id(node_type=None):
     Get a random node ID, optionally of a specific type
 
     Args:
-
-
-def verify_node_connections():
-    """
-    Verify that all nodes are properly connected and reachable.
-    Returns a tuple of (is_valid, list of issues)
-    """
-    issues = []
-    reachable_nodes = set()
-    all_nodes = set(nodes.keys())
-    
-    # Start from the initial node
-    to_visit = ['start']
-    reachable_nodes.add('start')
-    
-    # Traverse all connected nodes
-    while to_visit:
-        current = to_visit.pop()
-        node = nodes.get(current)
-        
-        if not node:
-            issues.append(f"Node {current} is referenced but doesn't exist")
-            continue
-            
-        # Check choices
-        if 'choices' in node:
-            for choice in node['choices']:
-                next_nodes = []
-                if 'next_node' in choice:
-                    next_nodes.append(choice['next_node'])
-                if 'success_node' in choice:
-                    next_nodes.append(choice['success_node'])
-                if 'failure_node' in choice:
-                    next_nodes.append(choice['failure_node'])
-                    
-                for next_node in next_nodes:
-                    if next_node not in nodes:
-                        issues.append(f"Node {current} references non-existent node {next_node}")
-                    elif next_node not in reachable_nodes:
-                        reachable_nodes.add(next_node)
-                        to_visit.append(next_node)
-                        
-        # Check direct next node
-        if 'next_node' in node:
-            next_node = node['next_node']
-            if next_node not in nodes:
-                issues.append(f"Node {current} references non-existent node {next_node}")
-            elif next_node not in reachable_nodes:
-                reachable_nodes.add(next_node)
-                to_visit.append(next_node)
-                
-        # Check battle outcomes
-        if 'victory_node' in node:
-            next_node = node['victory_node']
-            if next_node not in nodes:
-                issues.append(f"Node {current} references non-existent victory node {next_node}")
-            elif next_node not in reachable_nodes:
-                reachable_nodes.add(next_node)
-                to_visit.append(next_node)
-                
-        if 'defeat_node' in node:
-            next_node = node['defeat_node']
-            if next_node not in nodes:
-                issues.append(f"Node {current} references non-existent defeat node {next_node}")
-            elif next_node not in reachable_nodes:
-                reachable_nodes.add(next_node)
-                to_visit.append(next_node)
-    
-    # Check for unreachable nodes
-    unreachable = all_nodes - reachable_nodes
-    if unreachable:
-        issues.append(f"Unreachable nodes found: {', '.join(unreachable)}")
-    
-    return len(issues) == 0, issues
-
         node_type (str, optional): The type of node to retrieve
 
     Returns:
@@ -150,7 +75,81 @@ def verify_node_connections():
     if valid_nodes:
         return random.choice(valid_nodes)
     else:
-        return "start"  # Fallback to start node
+        return "start"
+
+
+def verify_node_connections():
+    """
+    Verify that all nodes are properly connected and reachable.
+    Returns a tuple of (is_valid, list of issues)
+    """
+    issues = []
+    reachable_nodes = set()
+    all_nodes = set(nodes.keys())
+
+    # Start from the initial node
+    to_visit = ['start']
+    reachable_nodes.add('start')
+
+    # Traverse all connected nodes
+    while to_visit:
+        current = to_visit.pop()
+        node = nodes.get(current)
+
+        if not node:
+            issues.append(f"Node {current} is referenced but doesn't exist")
+            continue
+
+        # Check choices
+        if 'choices' in node:
+            for choice in node['choices']:
+                next_nodes = []
+                if 'next_node' in choice:
+                    next_nodes.append(choice['next_node'])
+                if 'success_node' in choice:
+                    next_nodes.append(choice['success_node'])
+                if 'failure_node' in choice:
+                    next_nodes.append(choice['failure_node'])
+
+                for next_node in next_nodes:
+                    if next_node not in nodes:
+                        issues.append(f"Node {current} references non-existent node {next_node}")
+                    elif next_node not in reachable_nodes:
+                        reachable_nodes.add(next_node)
+                        to_visit.append(next_node)
+
+        # Check direct next node
+        if 'next_node' in node:
+            next_node = node['next_node']
+            if next_node not in nodes:
+                issues.append(f"Node {current} references non-existent node {next_node}")
+            elif next_node not in reachable_nodes:
+                reachable_nodes.add(next_node)
+                to_visit.append(next_node)
+
+        # Check battle outcomes
+        if 'victory_node' in node:
+            next_node = node['victory_node']
+            if next_node not in nodes:
+                issues.append(f"Node {current} references non-existent victory node {next_node}")
+            elif next_node not in reachable_nodes:
+                reachable_nodes.add(next_node)
+                to_visit.append(next_node)
+
+        if 'defeat_node' in node:
+            next_node = node['defeat_node']
+            if next_node not in nodes:
+                issues.append(f"Node {current} references non-existent defeat node {next_node}")
+            elif next_node not in reachable_nodes:
+                reachable_nodes.add(next_node)
+                to_visit.append(next_node)
+
+    # Check for unreachable nodes
+    unreachable = all_nodes - reachable_nodes
+    if unreachable:
+        issues.append(f"Unreachable nodes found: {', '.join(unreachable)}")
+
+    return len(issues) == 0, issues
 
 def count_nodes():
     """
@@ -1251,6 +1250,7 @@ Adewale se levanta e caminha até um pequeno nicho na parede, de onde retira um 
 
 "Adigun não busca mais comungar com os Òrìṣà - ele pretende romper completamente a barreira entre os mundos, permitindo que os Ajoguns, entidades do caos, invadam Yorùbáland."
 """,
+        ```python
         "choices": [
             {
                 "text": "Perguntar onde Adigun poderia estar escondido",
@@ -1794,7 +1794,7 @@ Você atravessa o portal, retornando exatamente ao momento e local de onde parti
         "title": "O Novo Imperador",
         "text": """Depois de derrotar Adigun e salvar Yorùbáland, você decide permanecer no passado. Seu conhecimento do futuro, combinado com a sabedoria que adquiriu em sua jornada, torna você um conselheiro inestimável para o rei.
 
-Anos se passam, e sua reputação cresce. Quando o velho rei falece sem herdeiros, o conselho de sacerdotes e anciãos unanimemente o escolhe como sucessor, apesar de sua origem estrangeira.
+Anos se passam, esua reputação cresce. Quando o velho rei falece sem herdeiros, o conselho de sacerdotes e anciãos unanimemente o escolhe como sucessor, apesar de sua origem estrangeira.
 
 Sob seu reinado, Yorùbáland prospera. Você introduz avanços médicos e agrícolas que salvam inúmeras vidas. Sua ligação com os Òrìṣà garante boas colheitas e paz nas fronteiras.
 
