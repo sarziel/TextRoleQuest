@@ -52,8 +52,8 @@
             this.data = data;
             this.x = x;
             this.y = y;
-            this.width = 150;
-            this.height = 80;
+            this.width = 180;
+            this.height = 90;
         }
 
         draw(ctx) {
@@ -78,11 +78,18 @@
             ctx.fillStyle = '#fff';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            // Display both ID and Title
-            let displayText = this.data.title ? 
-                `${this.id}\n${this.data.title}` : 
-                this.id;
-            ctx.fillText(displayText, this.x + this.width/2, this.y + 30);
+            // Display ID and Title
+            ctx.font = '12px Arial';
+            ctx.fillText(this.id, this.x + this.width/2, this.y + 20);
+            
+            if (this.data.title) {
+                ctx.font = '11px Arial';
+                let title = this.data.title;
+                if (title.length > 20) {
+                    title = title.substring(0, 20) + '...';
+                }
+                ctx.fillText(title, this.x + this.width/2, this.y + 40);
+            }
         }
 
         getColor() {
