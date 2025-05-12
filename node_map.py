@@ -499,28 +499,297 @@ Um homem idoso com vestes elaboradas e um cajado ornamentado se aproxima de voc�
         ]
     },
     
-    "temple_interior": {
-        "title": "Interior do Templo",
-        "text": """Você entra no templo com cautela. O interior é fresco e parcialmente iluminado por aberturas estratégicas no teto que criam feixes de luz natural. O ar cheira a incenso e ervas secas.
+    "examine_axe": {
+        "title": "O Machado Sagrado",
+        "text": """Você se aproxima do altar e examina cuidadosamente o machado cerimonial. É uma peça de artesanato extraordinária - um machado duplo de bronze polido com cabo ornamentado em madeira escura e detalhes em contas coloridas.
 
-As paredes internas estão cobertas de relevos e pinturas representando Sango e seus feitos: controlando tempestades, empunhando seu machado duplo, e julgando disputas com sua justiça severa mas justa.
+As lâminas têm símbolos gravados que você reconhece parcialmente como relâmpagos estilizados e padrões geométricos representando justiça e poder. O metal emite um suave zumbido quando você se aproxima, como se carregado com eletricidade estática.
 
-No centro da sala principal, um altar de pedra polida ostenta oferendas: frutas, pequenas esculturas de madeira e tigelas com substâncias desconhecidas. Acima do altar, preso à parede, está um objeto que imediatamente atrai sua atenção: um pequeno machado cerimonial de bronze com inscrições místicas.""",
+Um arrepio percorre sua espinha enquanto contempla o objeto. Este não é apenas um símbolo de culto - você sente instintivamente que possui poderes reais.""",
         "choices": [
             {
-                "text": "Examinar o machado cerimonial mais de perto",
+                "text": "Tocar o machado com cuidado",
+                "test": "spiritual",
+                "difficulty": 15,
+                "success_node": "axe_touch_success",
+                "failure_node": "axe_touch_failure" 
+            },
+            {
+                "text": "Recuar respeitosamente sem tocar",
+                "next_node": "temple_respect"
+            },
+            {
+                "text": "Examinar as oferendas no altar",
+                "next_node": "examine_offerings"
+            }
+        ]
+    },
+    
+    "study_murals_success": {
+        "title": "Revelações nas Paredes",
+        "text": """Você estuda atentamente os murais nas paredes e seu conhecimento cultural permite que você interprete a narrativa visual.
+
+As pinturas contam a história de Sango, que começou como o quarto rei de Oyo. Dotado de temperamento forte e habilidades mágicas relacionadas ao trovão, ele governou com mão firme. Uma tragédia ocorreu quando sua magia saiu de controle e destruiu parte de seu palácio.
+
+Envergonhado, Sango se exilou e eventualmente ascendeu aos céus, tornando-se um Òrìṣà. O templo foi construído para honrá-lo e pedir sua proteção e justiça.
+
+Um painel específico chama sua atenção - mostra Sango empunhando seu machado duplo contra seres sombrios que parecem emergir de uma fenda entre mundos. Abaixo, há uma inscrição que você decifra como: "Quando as tempestades cruzam os reinos, apenas o justiceiro pode restaurar o equilíbrio.".""",
+        "choices": [
+            {
+                "text": "Examinar o machado no altar",
                 "next_node": "examine_axe"
             },
             {
-                "text": "Estudar os relevos e pinturas nas paredes",
+                "text": "Procurar por passagens secretas no templo",
                 "test": "mental",
-                "difficulty": 12,
-                "success_node": "temple_paintings_insight",
-                "failure_node": "temple_paintings_confusion"
+                "difficulty": 14,
+                "success_node": "find_secret_chamber",
+                "failure_node": "no_secret_found"
             },
             {
-                "text": "Fazer uma pequena oferenda no altar",
-                "next_node": "temple_offering"
+                "text": "Sair do templo",
+                "next_node": "temple_exit"
+            }
+        ]
+    },
+    
+    "study_murals_failure": {
+        "title": "Imagens Enigmáticas",
+        "text": """Você observa os murais nas paredes, mas os símbolos e cenas são complexos demais para interpretar completamente com seu conhecimento atual.
+
+Reconhece que as pinturas parecem contar a história de um homem que se torna uma divindade, e há várias cenas de tempestades, julgamentos e batalhas. O uso frequente da cor vermelha e de símbolos de raios sugere poder e fúria divina.
+
+Uma imagem recorrente é a de um homem segurando um machado duplo, semelhante ao que está no altar. Este deve ser Sango, mas os detalhes específicos de sua história permanecem obscuros para você.""",
+        "choices": [
+            {
+                "text": "Examinar o machado no altar",
+                "next_node": "examine_axe"
+            },
+            {
+                "text": "Sair do templo",
+                "next_node": "temple_exit"
+            }
+        ]
+    },
+    
+    "temple_respect": {
+        "title": "Respeitando os Deuses",
+        "text": """Sentindo a atmosfera sagrada do local, você decide mostrar respeito. Curva-se diante do altar e recua alguns passos.
+
+A ação parece apropriada, pois você sente uma sutil mudança no ambiente - como se sua reverência tivesse sido notada e aprovada. O ar vibra levemente e você ouve um distante som de trovão, apesar do céu claro que viu ao entrar.
+
+Enquanto medita sobre a sensação, percebe uma presença atrás de você. Virando-se, encontra um homem idoso com vestes elaboradas, observando-o com interesse.""",
+        "choices": [
+            {
+                "text": "Apresentar-se ao homem",
+                "next_node": "meet_priest"
+            },
+            {
+                "text": "Perguntar sobre o templo e seu significado",
+                "next_node": "ask_about_temple"
+            },
+            {
+                "text": "Perguntar sobre o machado no altar",
+                "next_node": "ask_about_axe"
+            }
+        ]
+    },
+    
+    "temple_exit": {
+        "title": "Saindo do Templo",
+        "text": """Você decide que já viu o suficiente e caminha em direção à saída do templo. À medida que se aproxima da entrada, ouve o som de passos atrás de você.
+
+"Espere, viajante," diz uma voz. Virando-se, você vê um homem idoso com vestes ornamentadas. "Poucos estrangeiros visitam este templo. O que o traz aqui?"
+
+O homem o observa atentamente, como se pudesse ver além de sua aparência física.""",
+        "choices": [
+            {
+                "text": "Dizer a verdade sobre sua situação",
+                "next_node": "honest_explanation"
+            },
+            {
+                "text": "Dizer que é apenas um viajante curioso",
+                "next_node": "traveler_story"
+            },
+            {
+                "text": "Perguntar quem ele é antes de responder",
+                "next_node": "ask_about_priest"
+            }
+        ]
+    },
+    
+    "axe_touch_success": {
+        "title": "Conexão com o Trovão",
+        "text": """Com determinação, você estende a mão e toca o machado cerimonial. No instante em que seus dedos entram em contato com o metal, uma sensação eletrizante percorre seu corpo.
+
+Visões relâmpago inundam sua mente: tempestades rugindo sobre planícies, uma cidade ancestral com torres douradas, um rei empunhando o machado contra inimigos, e finalmente uma figura majestosa observando a Terra de um trono entre as nuvens.
+
+Quando a visão termina, você percebe que entende instintivamente mais sobre Sango e seu papel no panteão Yorùbá. O machado transmitiu conhecimento diretamente à sua mente.
+
+Algo também mudou dentro de você - uma conexão foi estabelecida. Você sente uma nova confiança e força interior, como se tivesse recebido a bênção do próprio Sango.""",
+        "choices": [
+            {
+                "text": "Agradecer em voz alta a Sango pela visão",
+                "next_node": "thank_sango"
+            },
+            {
+                "text": "Procurar por alguém no templo para compartilhar sua experiência",
+                "next_node": "meet_priest"
+            },
+            {
+                "text": "Deixar o templo com seu novo conhecimento",
+                "next_node": "temple_exit_enlightened"
+            }
+        ]
+    },
+    
+    "axe_touch_failure": {
+        "title": "A Ira do Trovão",
+        "text": """Ao tocar o machado cerimonial, você sente imediatamente que cometeu um erro. Uma forte descarga elétrica percorre seu braço, lançando-o para trás com força. Você cai no chão, atordoado, com a visão embaçada.
+
+O ar no templo fica pesado e carregado, como antes de uma tempestade. Você ouve o som de trovão distante, apesar de estar dentro do templo, e as sombras parecem se adensar.
+
+Lutando para se levantar, você percebe que o machado continua intacto no altar, mas agora parece irradiar uma aura de advertência. É claro que você foi considerado indigno de tocá-lo.""",
+        "battle": "temple_guardian",
+        "victory_node": "guardian_defeated",
+        "defeat_node": "temple_expulsion"
+    },
+    
+    "examine_offerings": {
+        "title": "Oferendas Sagradas",
+        "text": """Você examina cuidadosamente as oferendas dispostas no altar. Há frutas frescas, principalmente maçãs vermelhas e bananas; pequenas esculturas de madeira representando animais e pessoas; tigelas contendo o que parece ser mel, azeite de dendê e um tipo de bebida alcoólica.
+
+Também há itens mais incomuns: um pequeno martelo, uma pedra com forma de ovo, e várias contas vermelhas e brancas arranjadas em padrões específicos.
+
+Você reconhece estes como símbolos e itens tradicionais associados a Sango - o alimento e bebida para nutrir sua força, as representações de seus devotos, e os objetos que simbolizam seu domínio sobre o trovão e a justiça.""",
+        "choices": [
+            {
+                "text": "Fazer sua própria oferenda improvisada",
+                "next_node": "make_offering"
+            },
+            {
+                "text": "Examinar o machado no altar",
+                "next_node": "examine_axe"
+            },
+            {
+                "text": "Deixar o altar e explorar o resto do templo",
+                "test": "physical",
+                "difficulty": 8,
+                "success_node": "find_hidden_area",
+                "failure_node": "meet_priest"
+            }
+        ]
+    },
+    
+    "make_offering": {
+        "title": "Oferenda Pessoal",
+        "text": """Você procura entre seus pertences algo que possa servir como oferenda. De sua mochila, retira um pequeno item pessoal - talvez uma moeda de seu país, um lenço, ou outro objeto significativo.
+
+Com reverência, coloca-o junto às outras oferendas e faz um breve momento de silêncio respeitoso. O gesto, embora simples, parece apropriado.
+
+Após alguns instantes, você percebe uma mudança sutil no ambiente. O ar parece vibrar levemente e você ouve um som distante de trovão, apesar de estar dentro do templo. Sua oferenda foi aceita.""",
+        "choices": [
+            {
+                "text": "Examinar o machado cerimonial agora",
+                "next_node": "examine_axe_blessed"
+            },
+            {
+                "text": "Explorar mais o templo",
+                "next_node": "temple_exploration"
+            }
+        ]
+    },
+    
+    "examine_axe_blessed": {
+        "title": "O Machado e a Bênção",
+        "text": """Após sua oferenda ter sido aceita, você se aproxima do machado cerimonial com nova confiança. O objeto parece diferente agora - o metal brilha mais intensamente e o zumbido elétrico que emana dele é mais forte, mas não ameaçador.
+
+Quando estende a mão para o machado, não há hesitação. Seus dedos tocam o metal e, em vez da descarga dolorosa que muitos intrusos receberiam, você sente uma energia revigorante fluir para seu corpo.
+
+Visões breves, mas nítidas, passam por sua mente: você vê padrões de tempestades, rituais antigos, e figuras poderosas que devem ser os Òrìṣà. O conhecimento flui diretamente para sua consciência.""",
+        "choices": [
+            {
+                "text": "Absorver o conhecimento e aceitar a bênção",
+                "next_node": "receive_blessing"
+            },
+            {
+                "text": "Retirar a mão, temendo consequências desconhecidas",
+                "next_node": "reject_power"
+            }
+        ]
+    },
+    
+    "temple_exploration": {
+        "title": "Explorando o Templo",
+        "text": """Você decide explorar mais o templo de Sango. Além da sala principal com o altar, há diversos corredores e câmaras menores.
+
+Em uma das paredes da sala principal, você nota uma porta parcialmente oculta por tecidos decorativos. Curioso, você afasta os tecidos e encontra uma passagem para uma câmara interior, iluminada por tochas.
+
+Ao entrar, descobre uma sala circular onde as paredes são cobertas por mapas estrelares e símbolos astronômicos. No centro, há uma mesa baixa com um modelo em escala do que parece ser um sistema cosmológico yorùbá - representando a Terra, o céu, e os reinos dos Òrìṣà.""",
+        "choices": [
+            {
+                "text": "Estudar os mapas e símbolos astronômicos",
+                "test": "mental",
+                "difficulty": 14,
+                "success_node": "cosmic_knowledge",
+                "failure_node": "partial_understanding"
+            },
+            {
+                "text": "Examinar o modelo cosmológico",
+                "next_node": "examine_cosmology"
+            },
+            {
+                "text": "Voltar para a sala principal do templo",
+                "next_node": "return_to_main_hall"
+            }
+        ]
+    },
+    
+    "find_hidden_area": {
+        "title": "A Câmara Secreta",
+        "text": """Seu instinto o leva a investigar as paredes do templo. Observando atentamente, você nota uma sutil diferença na textura de uma seção da parede atrás de uma tapeçaria. Afastando o tecido, encontra uma pequena porta secreta.
+
+Com cuidado, você abre a porta e encontra uma escada estreita que desce para uma câmara subterrânea. Descendo lentamente, chega a uma sala circular iluminada por cristais estranhos que emitem um brilho azulado.
+
+A sala contém estantes com papiros e objetos antigos, e no centro há uma mesa com um grande mapa entalhado na pedra, mostrando toda a região de Yorùbáland com marcações em locais específicos.""",
+        "choices": [
+            {
+                "text": "Examinar os papiros e objetos",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "ancient_knowledge",
+                "failure_node": "confusing_documents"
+            },
+            {
+                "text": "Estudar o mapa com atenção",
+                "next_node": "sacred_map"
+            },
+            {
+                "text": "Retornar ao templo principal",
+                "next_node": "temple_respect"
+            }
+        ]
+    },
+    
+    "meet_priest": {
+        "title": "O Sacerdote de Sango",
+        "text": """O homem idoso se aproxima de você com passos deliberados. Suas vestes elaboradas são predominantemente vermelhas e brancas, decoradas com símbolos que representam raios e trovões. Ao redor de seu pescoço pende um colar de contas coloridas, e ele carrega um cajado ornamentado com símbolos esculpidos.
+
+"Eu sou Adewale, sumo sacerdote de Sango neste templo," ele diz, estudando seu rosto. "Poucos estrangeiros encontram este lugar, e menos ainda são permitidos entrar por Sango. Você deve ter um propósito especial aqui."
+
+Seus olhos são perspicazes e parecem enxergar além de sua aparência física, como se avaliasse sua essência.""",
+        "choices": [
+            {
+                "text": "Contar a verdade sobre sua situação e o amuleto",
+                "next_node": "truth_to_priest"
+            },
+            {
+                "text": "Perguntar sobre o templo e seu significado",
+                "next_node": "ask_about_temple"
+            },
+            {
+                "text": "Perguntar sobre os estranhos eventos que tem testemunhado",
+                "next_node": "ask_about_events"
             }
         ]
     },
