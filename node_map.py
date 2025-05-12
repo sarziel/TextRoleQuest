@@ -48,12 +48,12 @@ nodes = {
     "04_001": {
         "title": "Fim da Jornada",
         "text": """Sua aventura chega a um fim prematuro...""",
-        "end": true
+        "end": True
     },
     "04_002": {
         "title": "Vitória Final",
         "text": """Você conseguiu completar sua missão...""",
-        "end": true
+        "end": True
     }
 }
 
