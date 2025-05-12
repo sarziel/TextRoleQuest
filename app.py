@@ -216,10 +216,18 @@ def make_choice():
 
         # Check if this is a battle
         elif 'battle' in choice:
-            enemy = choice['battle']
-            session['battle_enemy'] = enemy
-            session['victory_node'] = choice.get('victory_node')
-            session['defeat_node'] = choice.get('defeat_node')
+            battle_data = choice['battle']
+            session['enemy'] = {
+                'name': battle_data['enemy_name'],
+                'description': battle_data['description'],
+                'max_health': battle_data['health'],
+                'current_health': battle_data['health'],
+                'attack': battle_data['attack'],
+                'defense': battle_data['defense'],
+                'spirit_resistance': battle_data['spirit_resistance']
+            }
+            session['victory_node'] = battle_data['victory_node']
+            session['defeat_node'] = battle_data['defeat_node']
 
             # Redirect to battle
             return redirect(url_for('battle_start'))

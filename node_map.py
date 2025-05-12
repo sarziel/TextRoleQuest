@@ -20,6 +20,34 @@ nodes = {
                 "next_node": "01_003"
             }
         ]
+    },
+    "02_001": {
+        "title": "Confronto com Guarda",
+        "text": """Um guarda hostil bloqueia seu caminho.""",
+        "battle": {
+            "enemy_name": "Guarda Real",
+            "description": "Um guarda forte e disciplinado, protegendo o palácio com lança e escudo.",
+            "health": 15,
+            "attack": 4,
+            "defense": 8,
+            "spirit_resistance": 5,
+            "victory_node": "01_002",
+            "defeat_node": "04_001"
+        }
+    },
+    "02_002": {
+        "title": "Xamã Hostil",
+        "text": """Um xamã ameaçador se aproxima com intenções hostis.""",
+        "battle": {
+            "enemy_name": "Xamã Hostil",
+            "description": "Um praticante de magia antiga que vê você como uma ameaça às tradições.",
+            "health": 10,
+            "attack": 3,
+            "defense": 4,
+            "spirit_resistance": 12,
+            "victory_node": "01_003",
+            "defeat_node": "04_001"
+        }
     }
 }
 
