@@ -1682,5 +1682,90 @@ Seu último pensamento é a esperança de que seu sacrifício não tenha sido em
 
 Historiadores e arqueólogos do futuro encontrarão registros fragmentados de um cataclismo espiritual que quase destruiu a civilização Yorùbá, e de um herói estrangeiro que deu sua vida para salvar um mundo que não era o seu.""",
         "end": True
+    },
+
+    "forest_encounter": {
+        "title": "O Encontro na Floresta",
+        "text": """Enquanto você caminha pela floresta densa, ouve o som de galhos quebrando próximo. Entre as árvores, você vê uma figura encapuzada se movendo rapidamente. Pela forma como se move, parece estar carregando algo pesado.
+
+O amuleto em seu pescoço começa a pulsar levemente, sugerindo que pode haver algo importante por perto.""",
+        "choices": [
+            {
+                "text": "Seguir a figura silenciosamente",
+                "test": "physical",
+                "difficulty": 12,
+                "success_node": "follow_success",
+                "failure_node": "follow_failure"
+            },
+            {
+                "text": "Chamar a atenção da figura",
+                "next_node": "confront_stranger"
+            },
+            {
+                "text": "Examinar a área em busca de pistas",
+                "test": "mental",
+                "difficulty": 10,
+                "success_node": "find_clues",
+                "failure_node": "no_clues"
+            }
+        ]
+    },
+
+    "follow_success": {
+        "title": "Perseguição Bem-sucedida",
+        "text": """Você consegue seguir a figura sem ser detectado. Ela leva você até uma pequena clareira onde um acampamento foi montado. Você vê mais duas pessoas vestidas de forma similar, e entre seus pertences, algo brilha com uma luz familiar - parece ser um dos artefatos sagrados!""",
+        "choices": [
+            {
+                "text": "Tentar se aproximar mais para ouvir a conversa",
+                "test": "physical",
+                "difficulty": 13,
+                "success_node": "overhear_conversation",
+                "failure_node": "spotted_spying"
+            },
+            {
+                "text": "Marcar o local e voltar para buscar ajuda",
+                "next_node": "return_for_help"
+            },
+            {
+                "text": "Confrontar o grupo diretamente",
+                "battle": "adigun_followers_camp",
+                "victory_node": "camp_victory",
+                "defeat_node": "camp_capture"
+            }
+        ]
+    },
+
+    "follow_failure": {
+        "title": "Perseguição Fracassada",
+        "text": """Você tenta seguir a figura silenciosamente, mas pisa em um galho seco que estala ruidosamente. A figura se vira rapidamente, revelando um dos seguidores de Adigun. Ele imediatamente assume uma postura defensiva.""",
+        "battle": "lone_follower",
+        "victory_node": "follower_defeated",
+        "defeat_node": "follower_captures"
+    },
+
+    "confront_stranger": {
+        "title": "Confronto Direto",
+        "text": """'Pare!' você grita. A figura para abruptamente e se vira. É uma mulher jovem, suas vestes marcadas com o símbolo de Adigun. Ela não parece assustada com sua presença.
+
+'Então você é o viajante de quem meu mestre falou,' ela diz, sua voz calma mas ameaçadora. 'Ele sabia que você viria.'""",
+        "choices": [
+            {
+                "text": "Tentar conversar e entender seus motivos",
+                "next_node": "dialogue_with_follower"
+            },
+            {
+                "text": "Exigir que ela entregue o artefato",
+                "battle": "female_follower",
+                "victory_node": "follower_surrender",
+                "defeat_node": "follower_escapes"
+            },
+            {
+                "text": "Usar o Amuleto de Ashe para tentar uma conexão espiritual",
+                "test": "spiritual",
+                "difficulty": 14,
+                "success_node": "spiritual_connection",
+                "failure_node": "connection_rejected"
+            }
+        ]
     }
 }
