@@ -621,9 +621,23 @@ def admin_node_detail(node_id):
     """Admin node detail"""
     node = node_map.get_node(node_id)
 
-    if 'text' not in node:
+    if not node or 'text' not in node:
         flash('Nó não encontrado.', 'danger')
         return redirect(url_for('admin_nodes'))
+
+    # Get node visit count
+    visit_count = db.count_node_visits_for_node(node_id)
+
+    # Get characters that visited this node
+    characters = db.get_characters_that_visited_node(node_id)
+
+    return render_template(
+        'admin/node_detail.html',
+        node_id=node_id,
+        node=node,
+        visit_count=visit_count,
+        characters=characters
+    )
 
 @app.route('/admin/node/create', methods=['GET', 'POST'])
 @admin_required
