@@ -7,7 +7,23 @@
     <div class="col-12">
         <div class="card shadow">
             <div class="card-body">
-                <nav aria-label="breadcrumb">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('admin_nodes') }}">Nós</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ node_id }}</li>
+                        </ol>
+                    </nav>
+                    <div class="btn-group">
+                        <a href="{{ url_for('admin_edit_node', node_id=node_id) }}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteNodeModal">
+                            <i class="bi bi-trash"></i> Excluir
+                        </button>
+                    </div>
+                </div>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="{{ url_for('admin_nodes') }}">Nós</a></li>

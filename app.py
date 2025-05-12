@@ -625,6 +625,62 @@ def admin_node_detail(node_id):
         flash('Nó não encontrado.', 'danger')
         return redirect(url_for('admin_nodes'))
 
+@app.route('/admin/node/create', methods=['GET', 'POST'])
+@admin_required
+def admin_create_node():
+    """Create a new node"""
+    if request.method == 'POST':
+        node_id = request.form.get('node_id')
+        if node_id in node_map.nodes:
+            flash('ID do nó já existe.', 'danger')
+            return redirect(url_for('admin_create_node'))
+        
+        node_data = {
+            'title': request.form.get('title'),
+            'text': request.form.get('text'),
+            'next_node': request.form.get('next_node')
+        }
+        
+        node_map.nodes[node_id] = node_data
+        node_map.save_nodes()
+        flash('Nó criado com sucesso!', 'success')
+        return redirect(url_for('admin_node_detail', node_id=node_id))
+        
+    return render_template('admin/node_form.html', node=None, action='create')
+
+@app.route('/admin/node/<node_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def admin_edit_node(node_id):
+    """Edit an existing node"""
+    node = node_map.get_node(node_id)
+    if not node:
+        flash('Nó não encontrado.', 'danger')
+        return redirect(url_for('admin_nodes'))
+        
+    if request.method == 'POST':
+        node['title'] = request.form.get('title')
+        node['text'] = request.form.get('text')
+        node['next_node'] = request.form.get('next_node')
+        
+        node_map.nodes[node_id] = node
+        node_map.save_nodes()
+        flash('Nó atualizado com sucesso!', 'success')
+        return redirect(url_for('admin_node_detail', node_id=node_id))
+        
+    return render_template('admin/node_form.html', node=node, node_id=node_id, action='edit')
+
+@app.route('/admin/node/<node_id>/delete', methods=['POST'])
+@admin_required
+def admin_delete_node(node_id):
+    """Delete a node"""
+    if node_id in node_map.nodes:
+        del node_map.nodes[node_id]
+        node_map.save_nodes()
+        flash('Nó excluído com sucesso!', 'success')
+    else:
+        flash('Nó não encontrado.', 'danger')
+    return redirect(url_for('admin_nodes'))
+
     # Get node visit count
     visit_count = db.count_node_visits_for_node(node_id)
 

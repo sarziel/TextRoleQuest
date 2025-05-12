@@ -1,0 +1,44 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Criar' if action == 'create' else 'Editar' }} Nó - Administração{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title">{{ 'Criar Novo' if action == 'create' else 'Editar' }} Nó</h2>
+                <form method="post">
+                    {% if action == 'create' %}
+                    <div class="mb-3">
+                        <label for="node_id" class="form-label">ID do Nó</label>
+                        <input type="text" class="form-control" id="node_id" name="node_id" required>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ node.title if node else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="text" class="form-label">Texto</label>
+                        <textarea class="form-control" id="text" name="text" rows="5" required>{{ node.text if node else '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="next_node" class="form-label">Próximo Nó</label>
+                        <input type="text" class="form-control" id="next_node" name="next_node" value="{{ node.next_node if node else '' }}">
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_nodes') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
