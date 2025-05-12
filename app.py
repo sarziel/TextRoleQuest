@@ -644,13 +644,28 @@ def admin_node_detail(node_id):
 def admin_create_node():
     """Create a new node"""
     if request.method == 'POST':
-        node_id = request.form.get('node_id')
-        if node_id in node_map.nodes:
-            flash('ID do nó já existe.', 'danger')
-            return redirect(url_for('admin_create_node'))
+        title = request.form.get('title', '').strip()
+        
+        # Generate node ID from title or timestamp
+        if title:
+            # Convert title to slug format (lowercase, replace spaces with underscore)
+            node_id = title.lower().replace(' ', '_')[:30]
+            # Remove special characters
+            node_id = ''.join(c for c in node_id if c.isalnum() or c == '_')
+        else:
+            # Use timestamp if no title
+            from datetime import datetime
+            node_id = f"node_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        # Add numeric suffix if ID already exists
+        base_id = node_id
+        counter = 1
+        while node_id in node_map.nodes:
+            node_id = f"{base_id}_{counter}"
+            counter += 1
         
         node_data = {
-            'title': request.form.get('title'),
+            'title': title,
             'text': request.form.get('text'),
             'next_node': request.form.get('next_node')
         }
