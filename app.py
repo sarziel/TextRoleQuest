@@ -32,10 +32,11 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 }
 
 # Import database models and initialize
-from models import db
+from models import db, Admin, Character, NodeVisit
 from database import init_db, create_admin, get_admin, create_character, get_character
 from database import update_character, record_node_visit, get_node_visits, get_character_visits, get_all_characters
-db.init_app(app)
+
+init_db(app)
 
 # Setup Flask-Login
 login_manager = LoginManager()

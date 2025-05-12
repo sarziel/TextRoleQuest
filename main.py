@@ -1,7 +1,7 @@
 """
-Main module for Yorùbáland RPG web application
+Yorùbáland RPG Game
+Main entry point for the game
 """
-
 from app import app
 
 if __name__ == '__main__':
