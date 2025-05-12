@@ -26,19 +26,16 @@ def save_game(player, current_node, turn_counter):
         # Create a dictionary with all important game state
         save_data = {
             "player": {
-                "name": player.name,
-                "class": player.character_class,
-                "gender": player.gender,
-                "mental": player.mental,
-                "physical": player.physical,
-                "spiritual": player.spiritual,
-                "max_health": player.max_health,
-                "current_health": player.current_health,
-                "inventory": player.inventory,
-                "special_abilities": player.special_abilities,
-                "choices_made": player.choices_made,
-                "orisha_favor": player.orisha_favor,
-                "achievements": list(player.achievements)
+                "name": player["name"],
+                "class": player["class"],
+                "gender": player["gender"],
+                "mental": player["mental"],
+                "physical": player["physical"],
+                "spiritual": player["spiritual"],
+                "max_health": player["max_health"],
+                "current_health": player["current_health"],
+                "inventory": player["inventory"],
+                "special_abilities": player["special_abilities"]
             },
             "game_state": {
                 "current_node": current_node,
