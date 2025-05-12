@@ -1546,6 +1546,63 @@ Ao redor da fonte, três figuras humanoides compostas inteiramente de lava se mo
         ]
     },
 
+    "mountain_cave": {
+        "title": "A Caverna Misteriosa",
+        "text": """Durante sua exploração das Montanhas de Ferro, você encontra uma caverna cuja entrada é decorada com símbolos antigos. O ar que sai dela é surpreendentemente quente, e você ouve o som distante de marteladas.""",
+        "choices": [
+            {
+                "text": "Entrar na caverna",
+                "next_node": "forge_entrance"
+            },
+            {
+                "text": "Examinar os símbolos na entrada",
+                "test": "mental",
+                "difficulty": 12,
+                "success_node": "decipher_cave_symbols",
+                "failure_node": "mysterious_symbols"
+            }
+        ]
+    },
+
+    "forge_entrance": {
+        "title": "A Forja Ancestral",
+        "text": """A caverna se abre em uma câmara impressionante. Uma forja antiga ocupa o centro do espaço, suas chamas ardendo com um brilho sobrenatural. Ferramentas e armas inacabadas cobrem as paredes.""",
+        "choices": [
+            {
+                "text": "Aproximar-se da forja",
+                "next_node": "approach_forge"
+            },
+            {
+                "text": "Procurar por pistas da Espada",
+                "test": "mental",
+                "difficulty": 13,
+                "success_node": "find_sword_clues",
+                "failure_node": "dead_end"
+            }
+        ]
+    },
+
+    "decipher_cave_symbols": {
+        "title": "Revelações Antigas",
+        "text": """Você consegue decifrar os símbolos. Eles contam a história da forja onde Ogun criou suas primeiras ferramentas. Também mencionam uma passagem secreta que leva ao coração da montanha.""",
+        "choices": [
+            {
+                "text": "Procurar a passagem secreta",
+                "next_node": "secret_passage"
+            },
+            {
+                "text": "Entrar pela entrada principal",
+                "next_node": "forge_entrance"
+            }
+        ]
+    },
+
+    "mysterious_symbols": {
+        "title": "Símbolos Enigmáticos",
+        "text": """Os símbolos são complexos demais para seu entendimento atual. Você reconhece apenas que estão relacionados a Ogun e metalurgia.""",
+        "next_node": "forge_entrance"
+    },
+
     "smoking_peaks": {
         "title": "Os Picos Fumegantes",
         "text": """Você segue o caminho da direita, subindo ainda mais alto nas Montanhas de Ferro, em direção à área onde fumaça escura emana do solo. A trilha se torna mais íngreme e irregular, com pedras soltas que tornam cada passo um potencial perigo.
@@ -1668,6 +1725,57 @@ Sob seu reinado, Yorùbáland prospera. Você introduz avanços médicos e agrí
 
 Os historiadores do futuro, séculos depois, encontrarão referências a um governante misterioso e poderoso, que veio de terras distantes e trouxe uma era de ouro para a civilização Yorùbá - sem nunca saber que estavam falando de você.""",
         "end": True
+    },
+
+    "moon_lake_entrance": {
+        "title": "As Margens do Lago da Lua",
+        "text": """Você chega às margens do lendário Lago da Lua. Suas águas são de um azul profundo e sobrenatural, refletindo o céu como um espelho perfeito. Pequenas luzes dançam sobre a superfície.""",
+        "choices": [
+            {
+                "text": "Aproximar-se da água",
+                "next_node": "water_edge"
+            },
+            {
+                "text": "Procurar por sinais das sereias",
+                "test": "spiritual",
+                "difficulty": 12,
+                "success_node": "mermaid_contact",
+                "failure_node": "no_response"
+            }
+        ]
+    },
+
+    "water_edge": {
+        "title": "À Beira d'Água",
+        "text": """Ao se aproximar da água, você nota que ela emite um leve brilho próprio. Seu reflexo parece... diferente, como se mostrasse uma versão alternativa de você.""",
+        "choices": [
+            {
+                "text": "Tocar a água",
+                "test": "spiritual",
+                "difficulty": 11,
+                "success_node": "water_vision",
+                "failure_node": "water_shock"
+            },
+            {
+                "text": "Chamar pelas sereias",
+                "next_node": "call_mermaids"
+            }
+        ]
+    },
+
+    "mermaid_contact": {
+        "title": "O Chamado das Sereias",
+        "text": """Uma figura graciosa emerge das águas - uma sereia com escamas que brilham como pérolas. Ela o observa com curiosidade. 'Você carrega o Amuleto de Ashe,' ela diz. 'Talvez possa nos ajudar a recuperar o Cálice.'""",
+        "choices": [
+            {
+                "text": "Oferecer ajuda às sereias",
+                "next_node": "help_mermaids"
+            },
+            {
+                "text": "Perguntar sobre o Cálice",
+                "next_node": "ask_about_chalice"
+            }
+        ]
     },
 
     "end_tragic": {
