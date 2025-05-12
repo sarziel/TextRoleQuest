@@ -225,7 +225,7 @@ def player_spirit(console, player, enemy):
 
 def roll_battle_dice(console):
     """
-    Roll a d20 for battle and display the result
+    Roll a d20 for battle and display the result with animation
     
     Args:
         console: Rich console object
@@ -233,12 +233,16 @@ def roll_battle_dice(console):
     Returns:
         int: The dice roll result
     """
+    # Animate dice rolling
+    faces = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"]
     with Progress(transient=True) as progress:
         task = progress.add_task("[cyan]Rolando dado...", total=100)
         
-        for i in range(10):
-            progress.update(task, advance=10)
-            time.sleep(0.05)
+        for i in range(8):
+            face = random.choice(faces)
+            console.print(f"\n[bold cyan]{face} Rolando...[/bold cyan]")
+            progress.update(task, advance=12.5)
+            time.sleep(0.15)
     
     result = random.randint(1, 20)
     
