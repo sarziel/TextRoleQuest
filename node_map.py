@@ -1,4 +1,3 @@
-
 """
 Node Map Module - Defines the story structure and nodes
 """
@@ -21,95 +20,6 @@ nodes = {
                 "next_node": "01_003"
             }
         ]
-    },
-    "01_002": {
-        "title": "O Amuleto Misterioso",
-        "text": """Você segura o amuleto com cuidado, examinando-o de perto. É feito de um metal dourado que não consegue identificar, com intrincados símbolos gravados em sua superfície.""",
-        "next_node": "01_003"
-    },
-    "01_003": {
-        "title": "O Vale dos Ferreiros",
-        "text": """Você segue o caminho da esquerda, descendo por um vale rochoso.""",
-        "next_node": "02_001"
-    },
-    "02_001": {
-        "title": "Confronto com o Guardião",
-        "text": """Uma figura imponente de metal bloqueou seu caminho. O Guardião de Ferro se prepara para o combate!""",
-        "battle": "iron_guardian",
-        "victory_node": "01_004",
-        "defeat_node": "04_001"
-    },
-    "01_004": {
-        "title": "A Forja Ancestral",
-        "text": """Após derrotar o guardião, você encontra uma antiga forja ainda em funcionamento.""",
-        "choices": [
-            {
-                "text": "Examinar as ferramentas",
-                "next_node": "01_005"
-            },
-            {
-                "text": "Seguir adiante",
-                "next_node": "03_001"
-            }
-        ]
-    },
-    "01_005": {
-        "title": "Ferramentas Sagradas",
-        "text": """As ferramentas parecem ter sido abençoadas por Ogun, o Òrìṣà do ferro e da forja.""",
-        "next_node": "03_001"
-    },
-    "03_001": {
-        "title": "A Passagem Direta",
-        "text": """Um corredor estreito leva diretamente ao próximo local.""",
-        "next_node": "01_006"
-    },
-    "01_006": {
-        "title": "O Santuário Interior",
-        "text": """Você chega a um santuário antigo, decorado com símbolos dos Òrìṣà.""",
-        "choices": [
-            {
-                "text": "Meditar e buscar orientação",
-                "next_node": "01_007"
-            },
-            {
-                "text": "Explorar o santuário",
-                "next_node": "02_002"
-            }
-        ]
-    },
-    "02_002": {
-        "title": "Guardião do Santuário",
-        "text": """Sua exploração desperta o guardião espiritual do local!""",
-        "battle": "spirit_guardian",
-        "victory_node": "01_007",
-        "defeat_node": "04_001"
-    },
-    "01_007": {
-        "title": "Revelação Divina",
-        "text": """Os Òrìṣà concedem a você uma visão do caminho a seguir.""",
-        "next_node": "03_002"
-    },
-    "03_002": {
-        "title": "O Caminho Final",
-        "text": """O caminho à sua frente leva ao confronto decisivo.""",
-        "next_node": "02_003"
-    },
-    "02_003": {
-        "title": "Confronto Final",
-        "text": """Você encontra o líder corrupto preparando seu ritual profano.""",
-        "battle": "dark_priest",
-        "victory_node": "04_002",
-        "defeat_node": "04_001"
-    },
-    "04_001": {
-        "title": "Fim da Jornada",
-        "text": """Sua aventura chega a um fim prematuro...""",
-        "end": True
-    },
-    "04_002": {
-        "title": "Vitória Final",
-        "text": """Você conseguiu completar sua missão e restaurar o equilíbrio.""",
-        "end": True
     }
 }
 
@@ -132,7 +42,7 @@ def get_random_node_id(node_type=None):
             valid_nodes.append(node_id)
         elif node_type is None:
             valid_nodes.append(node_id)
-    
+
     if valid_nodes:
         return random.choice(valid_nodes)
     else:
@@ -143,18 +53,18 @@ def verify_node_connections():
     issues = []
     reachable_nodes = set()
     all_nodes = set(nodes.keys())
-    
+
     to_visit = ['01_001']
     reachable_nodes.add('01_001')
-    
+
     while to_visit:
         current = to_visit.pop()
         node = nodes.get(current)
-        
+
         if not node:
             issues.append(f"Node {current} is referenced but doesn't exist")
             continue
-            
+
         if 'choices' in node:
             for choice in node['choices']:
                 next_nodes = []
@@ -164,14 +74,14 @@ def verify_node_connections():
                     next_nodes.append(choice['success_node'])
                 if 'failure_node' in choice:
                     next_nodes.append(choice['failure_node'])
-                    
+
                 for next_node in next_nodes:
                     if next_node not in nodes:
                         issues.append(f"Node {current} references non-existent node {next_node}")
                     elif next_node not in reachable_nodes:
                         reachable_nodes.add(next_node)
                         to_visit.append(next_node)
-                        
+
         if 'next_node' in node:
             next_node = node['next_node']
             if next_node not in nodes:
@@ -179,7 +89,7 @@ def verify_node_connections():
             elif next_node not in reachable_nodes:
                 reachable_nodes.add(next_node)
                 to_visit.append(next_node)
-                
+
         if 'victory_node' in node:
             next_node = node['victory_node']
             if next_node not in nodes:
@@ -187,7 +97,7 @@ def verify_node_connections():
             elif next_node not in reachable_nodes:
                 reachable_nodes.add(next_node)
                 to_visit.append(next_node)
-                
+
         if 'defeat_node' in node:
             next_node = node['defeat_node']
             if next_node not in nodes:
@@ -195,11 +105,11 @@ def verify_node_connections():
             elif next_node not in reachable_nodes:
                 reachable_nodes.add(next_node)
                 to_visit.append(next_node)
-    
+
     unreachable = all_nodes - reachable_nodes
     if unreachable:
         issues.append(f"Unreachable nodes found: {', '.join(unreachable)}")
-        
+
     return len(issues) == 0, issues
 
 def count_nodes():
