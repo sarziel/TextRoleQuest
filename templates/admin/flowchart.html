@@ -9,10 +9,20 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2 class="card-title">Mapa de Fluxo da História</h2>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" id="zoomIn"><i class="bi bi-zoom-in"></i></button>
-                        <button class="btn btn-primary" id="zoomOut"><i class="bi bi-zoom-out"></i></button>
-                        <button class="btn btn-primary" id="resetZoom"><i class="bi bi-arrows-angle-expand"></i></button>
+                    <div class="controls">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-primary" id="moveUp" title="Mover para cima"><i class="bi bi-arrow-up"></i></button>
+                        </div>
+                        <div class="btn-group me-2">
+                            <button class="btn btn-primary" id="moveLeft" title="Mover para esquerda"><i class="bi bi-arrow-left"></i></button>
+                            <button class="btn btn-primary" id="moveDown" title="Mover para baixo"><i class="bi bi-arrow-down"></i></button>
+                            <button class="btn btn-primary" id="moveRight" title="Mover para direita"><i class="bi bi-arrow-right"></i></button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="zoomIn" title="Aumentar zoom"><i class="bi bi-zoom-in"></i></button>
+                            <button class="btn btn-primary" id="zoomOut" title="Diminuir zoom"><i class="bi bi-zoom-out"></i></button>
+                            <button class="btn btn-primary" id="resetView" title="Resetar visualização"><i class="bi bi-arrows-angle-expand"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,6 +203,8 @@
         }
 
         // Controls
+        const moveStep = 50;
+        
         document.getElementById('zoomIn').onclick = () => {
             scale *= 1.2;
             render();
@@ -203,12 +215,60 @@
             render();
         };
 
-        document.getElementById('resetZoom').onclick = () => {
+        document.getElementById('resetView').onclick = () => {
             scale = 1;
             offsetX = 0;
             offsetY = 0;
             render();
         };
+
+        document.getElementById('moveUp').onclick = () => {
+            offsetY += moveStep;
+            render();
+        };
+
+        document.getElementById('moveDown').onclick = () => {
+            offsetY -= moveStep;
+            render();
+        };
+
+        document.getElementById('moveLeft').onclick = () => {
+            offsetX += moveStep;
+            render();
+        };
+
+        document.getElementById('moveRight').onclick = () => {
+            offsetX -= moveStep;
+            render();
+        };
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                offsetY += moveStep;
+                render();
+            } else if (e.key === 'ArrowDown') {
+                offsetY -= moveStep;
+                render();
+            } else if (e.key === 'ArrowLeft') {
+                offsetX += moveStep;
+                render();
+            } else if (e.key === 'ArrowRight') {
+                offsetX -= moveStep;
+                render();
+            } else if (e.key === '+' || e.key === '=') {
+                scale *= 1.2;
+                render();
+            } else if (e.key === '-') {
+                scale *= 0.8;
+                render();
+            } else if (e.key === 'r') {
+                scale = 1;
+                offsetX = 0;
+                offsetY = 0;
+                render();
+            }
+        });
 
         // Pan functionality
         let isDragging = false;
