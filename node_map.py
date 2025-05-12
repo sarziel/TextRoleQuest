@@ -361,6 +361,145 @@ Ao se aproximar da entrada, você nota uma estátua de pedra representando uma f
     },
     
     "temple_interior": {
+        "title": "Dentro do Templo de Sango",
+        "text": """Você respira fundo e entra no templo. O interior é espaçoso e fresco comparado ao calor externo. Feixes de luz entram por pequenas aberturas no teto, iluminando o ambiente com um brilho dourado.
+
+No centro da sala principal há um altar de pedra, sobre o qual repousa um machado duplo cerimonial, feito de metal brilhante. Nas paredes, murais elaborados retratam a história de Sango - sua ascensão como rei, seu domínio sobre o trovão e sua eventual deificação.
+
+O local tem uma atmosfera de poder concentrado, e você sente uma presença imponente, como se estivesse sendo julgado por olhos invisíveis.""",
+        "choices": [
+            {
+                "text": "Aproximar-se do altar para examinar o machado",
+                "next_node": "examine_axe"
+            },
+            {
+                "text": "Estudar os murais nas paredes",
+                "test": "mental",
+                "difficulty": 10,
+                "success_node": "study_murals_success",
+                "failure_node": "study_murals_failure"
+            },
+            {
+                "text": "Fazer uma reverência respeitosa e recuar",
+                "next_node": "temple_respect"
+            }
+        ]
+    },
+    
+    "decipher_temple_symbols": {
+        "title": "Símbolos Revelados",
+        "text": """Você examina cuidadosamente os entalhes nas colunas, e seu conhecimento acadêmico permite que você decifre parte do seu significado.
+
+Os símbolos contam a história da fundação deste templo: foi construído após uma grande tempestade que quase destruiu a aldeia próxima. O povo, acreditando que Sango demonstrava sua ira, ergueu este santuário para apaziguá-lo.
+
+Você também descobre que este é um local de julgamento, onde disputas importantes eram resolvidas sob o olhar de Sango, que favorecia a verdade e a justiça acima de tudo. Aqueles que mentissem dentro do templo atrairiam sua ira na forma de um raio.""",
+        "choices": [
+            {
+                "text": "Entrar no templo com o novo conhecimento",
+                "next_node": "temple_interior_informed"
+            },
+            {
+                "text": "Voltar pelo caminho e seguir para o rio",
+                "next_node": "river_shrine"
+            }
+        ]
+    },
+    
+    "partial_temple_understanding": {
+        "title": "Pistas Parciais",
+        "text": """Você estuda os entalhes nas colunas, mas muitos dos símbolos são complexos demais para sua compreensão atual.
+
+Consegue discernir que este é um templo dedicado a Sango, e que tem algo a ver com justiça e julgamento, mas os detalhes específicos escapam ao seu entendimento.
+
+Uma coisa fica clara: este é um local de grande poder e significado para o povo local.""",
+        "choices": [
+            {
+                "text": "Entrar no templo para explorar mais",
+                "next_node": "temple_interior"
+            },
+            {
+                "text": "Voltar pelo caminho e seguir para o rio",
+                "next_node": "river_shrine"
+            }
+        ]
+    },
+    
+    "temple_interior_informed": {
+        "title": "Templo da Justiça",
+        "text": """Com seu conhecimento aprimorado sobre o propósito deste templo, você entra com maior confiança.
+
+O interior é como esperava: uma câmara ampla com um altar central, iluminada por feixes de luz natural. O que não esperava era encontrar outra pessoa ali.
+
+Um homem idoso usando vestes elaboradas está de pé junto ao altar. Ele se vira ao ouvir seus passos e o observa com um olhar penetrante. 'Você não é deste lugar,' ele diz em uma língua que, surpreendentemente, você consegue entender. 'No entanto, Sango permitiu sua entrada. Isso é... interessante.'""",
+        "choices": [
+            {
+                "text": "Explicar honestamente sua situação",
+                "next_node": "honest_explanation"
+            },
+            {
+                "text": "Inventar uma história sobre ser um viajante de terras distantes",
+                "next_node": "false_explanation"
+            },
+            {
+                "text": "Perguntar quem ele é e qual seu papel neste templo",
+                "next_node": "ask_about_priest"
+            }
+        ]
+    },
+    
+    "approach_village": {
+        "title": "Aproximação à Aldeia",
+        "text": """Você decide que esconder-se não é a melhor abordagem e caminha abertamente em direção à aldeia. Enquanto se aproxima, várias pessoas notam sua presença e param o que estavam fazendo para observá-lo.
+
+Sua aparência e roupas claramente o marcam como um estranho, e você percebe expressões de surpresa e desconfiança. Alguns homens pegam lanças, embora não as apontem para você - ainda.
+
+Um homem de meia-idade, usando vestes elaboradas e um colar de contas coloridas, dá um passo à frente. 'Quem é você e de onde vem?' ele pergunta em uma língua que, para sua surpresa, você consegue entender perfeitamente.""",
+        "choices": [
+            {
+                "text": "Explicar honestamente que você é um viajante de outro tempo",
+                "test": "mental",
+                "difficulty": 15,
+                "success_node": "honest_explanation_success",
+                "failure_node": "honest_explanation_fail"
+            },
+            {
+                "text": "Dizer que é um viajante de terras distantes",
+                "next_node": "traveler_story"
+            },
+            {
+                "text": "Mostrar o amuleto em seu pescoço",
+                "next_node": "show_amulet_village"
+            }
+        ]
+    },
+    
+    "approach_with_amulet": {
+        "title": "O Amuleto Revelado",
+        "text": """Com o conhecimento adquirido, você caminha confiante em direção à aldeia, o amuleto brilhando visivelmente em seu peito.
+
+O efeito é imediato e surpreendente. Pessoas param de dançar e olham em sua direção. Murmúrios se espalham pela multidão. Alguns parecem temerosos, outros curiosos, e alguns se prostram no chão.
+
+Um homem idoso com vestes elaboradas e um cajado ornamentado se aproxima de você, olhando fixamente para o amuleto. 'O Amuleto de Ashe,' ele diz com voz trêmula. 'O artefato perdido retornou.' Ele ergue os olhos para seu rosto. 'E quem é você, que o traz de volta para nós?'""",
+        "choices": [
+            {
+                "text": "Dizer a verdade sobre sua origem",
+                "next_node": "truth_to_babalawo"
+            },
+            {
+                "text": "Afirmar que foi enviado pelos Òrìṣà",
+                "test": "spiritual",
+                "difficulty": 14,
+                "success_node": "claim_orisha_messenger",
+                "failure_node": "false_claim_exposed"
+            },
+            {
+                "text": "Perguntar sobre o significado do amuleto",
+                "next_node": "ask_about_amulet"
+            }
+        ]
+    },
+    
+    "temple_interior": {
         "title": "Interior do Templo",
         "text": """Você entra no templo com cautela. O interior é fresco e parcialmente iluminado por aberturas estratégicas no teto que criam feixes de luz natural. O ar cheira a incenso e ervas secas.
 
