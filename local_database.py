@@ -45,7 +45,11 @@ def ensure_data_dir():
         os.makedirs(DATA_DIR)
     for file_name in [ADMIN_FILE, CHARACTER_FILE, NODE_VISITS_FILE]:
         if not os.path.exists(file_name):
-            save_json(file_name, {} if file_name == ADMIN_FILE else [])
+            try:
+                with open(file_name, 'w', encoding='utf-8') as f:
+                    json.dump({} if file_name == ADMIN_FILE else [], f, indent=2)
+            except Exception as e:
+                print(f"Error creating {file_name}: {e}")
 
 def load_json(file_path, default=None):
     """Load JSON data from file"""
