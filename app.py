@@ -14,7 +14,14 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 # Create Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    # Modificar URL para desativar SSL se necessário
+    database_url = database_url.replace('postgres://', 'postgresql://')
+    if '?' not in database_url:
+        database_url += '?sslmode=require'
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Import and initialize database
@@ -30,14 +37,42 @@ login_manager.login_view = 'admin_login'
 def load_user(user_id):
     return Admin.query.get(int(user_id))
 
-# Create admin user if it doesn't exist
+# Função para criar usuário admin
+def create_admin_user():
+    """Cria o usuário administrador se não existir"""
+    try:
+        db.create_all()
+        # Verificar se o usuário admin já existe
+        admin_user = Admin.query.filter_by(username='admin').first()
+        if not admin_user:
+            # Criar novo usuário admin
+            admin_user = Admin()
+            admin_user.username = 'admin'
+            admin_user.set_password('admin123')
+            db.session.add(admin_user)
+            db.session.commit()
+            print("Usuário admin criado com sucesso!")
+        else:
+            print("Usuário admin já existe.")
+    except Exception as e:
+        print(f"Erro ao criar usuário admin: {e}")
+        db.session.rollback()
+
+# Registrar comando para criar o usuário admin
+@app.cli.command('create-admin')
+def create_admin_command():
+    """Comando para criar usuário admin"""
+    create_admin_user()
+
+# Em versões mais recentes do Flask, before_first_request foi removido
+# Vamos usar uma função que será chamada na primeira requisição
 with app.app_context():
-    db.create_all()
-    if not Admin.query.filter_by(username='admin').first():
-        admin = Admin(username='admin')
-        admin.set_password('admin123')
-        db.session.add(admin)
-        db.session.commit()
+    try:
+        # Tentar criar o banco de dados e o usuário admin na inicialização
+        db.create_all()
+        create_admin_user()
+    except Exception as e:
+        print(f"Erro na inicialização do banco de dados: {e}")
 
 # Admin authentication decorator
 def admin_required(f):
@@ -53,6 +88,40 @@ def admin_required(f):
 def index():
     """Main index page"""
     return render_template('index.html')
+    
+@app.route('/admin-info')
+def admin_info():
+    """Informações de diagnóstico do admin"""
+    # Verificar estado do banco de dados
+    db_status = "Conectado"
+    admin_exists = "Não encontrado"
+    table_info = []
+    
+    try:
+        # Verificar se o usuário admin existe
+        admin = Admin.query.filter_by(username='admin').first()
+        if admin:
+            admin_exists = "Encontrado (ID: {})".format(admin.id)
+        
+        # Obter informações das tabelas
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        table_info = inspector.get_table_names()
+    except Exception as e:
+        db_status = "Erro: {}".format(str(e))
+    
+    # Obter informações dos nós
+    node_count = node_map.count_nodes()
+    node_examples = list(node_map.nodes.keys())[:5]  # Primeiros 5 nós
+    
+    return render_template(
+        'admin_info.html',
+        db_status=db_status,
+        admin_exists=admin_exists,
+        table_info=table_info,
+        node_count=node_count,
+        node_examples=node_examples
+    )
 
 # Import the game modules so we can use them in our routes
 import player

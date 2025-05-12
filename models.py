@@ -11,6 +11,7 @@ db = SQLAlchemy()
 
 class Admin(UserMixin, db.Model):
     """Modelo para administradores do sistema"""
+    __tablename__ = 'admins'  # Definir nome da tabela explicitamente
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)

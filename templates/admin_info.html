@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações do Admin</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Informações do Admin</h1>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Estado do Banco de Dados</h2>
+            </div>
+            <div class="card-body">
+                <p>Estado da conexão: {{ db_status }}</p>
+                <p>Usuário admin: {{ admin_exists }}</p>
+                
+                {% if table_info %}
+                <h3 class="mt-4">Tabelas</h3>
+                <ul class="list-group">
+                    {% for table in table_info %}
+                    <li class="list-group-item">{{ table }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Nós da História</h2>
+            </div>
+            <div class="card-body">
+                <p>Total de nós: {{ node_count }}</p>
+                
+                <h3 class="mt-4">Primeiros 5 nós:</h3>
+                <ul class="list-group">
+                    {% for node_id in node_examples %}
+                    <li class="list-group-item">{{ node_id }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="/admin/login" class="btn btn-primary">Ir para Login Admin</a>
+            <a href="/" class="btn btn-secondary">Voltar para Página Inicial</a>
+        </div>
+    </div>
+</body>
+</html>
