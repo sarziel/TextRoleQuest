@@ -62,9 +62,11 @@
             this.data = data;
             this.x = x;
             this.y = y;
-            this.width = 180;
-            this.height = 90;
+            this.width = 200;
+            this.height = 120;
             this.connections = [];
+            this.targetX = x;
+            this.targetY = y;
         }
 
         draw(ctx) {
@@ -74,63 +76,140 @@
                 if (filter === 'end' && !this.data.end) return;
             }
 
+            // Smooth animation to target position
+            this.x += (this.targetX - this.x) * 0.1;
+            this.y += (this.targetY - this.y) * 0.1;
+
             ctx.save();
-            ctx.fillStyle = this.getColor();
-            ctx.strokeStyle = this.getColor();
+            const gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+            const baseColor = this.getColor();
+            gradient.addColorStop(0, baseColor);
+            gradient.addColorStop(1, this.adjustColor(baseColor, -20));
+            
+            ctx.fillStyle = gradient;
+            ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
 
-            // Draw node box
+            // Draw node box with shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+            
             ctx.beginPath();
-            ctx.roundRect(this.x, this.y, this.width, this.height, 10);
+            ctx.roundRect(this.x, this.y, this.width, this.height, 15);
             ctx.fill();
             ctx.stroke();
 
+            // Reset shadow for text
+            ctx.shadowColor = 'transparent';
+
             // Draw text
             ctx.fillStyle = '#fff';
-            ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            // Display numeric ID and Title
-            ctx.font = '12px Arial';
-            ctx.fillText(`ID: ${this.id}`, this.x + this.width/2, this.y + 20);
             
+            // Draw ID
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`Node: ${this.id}`, this.x + this.width/2, this.y + 25);
+            
+            // Draw Title
             if (this.data.title) {
-                ctx.font = '11px Arial';
+                ctx.font = '12px Arial';
                 let title = this.data.title;
-                if (title.length > 20) {
-                    title = title.substring(0, 20) + '...';
+                if (title.length > 25) {
+                    title = title.substring(0, 25) + '...';
                 }
-                ctx.fillText(title, this.x + this.width/2, this.y + 40);
+                ctx.fillText(title, this.x + this.width/2, this.y + 45);
             }
+
+            // Draw node type indicators
+            ctx.font = '11px Arial';
+            let typeTexts = [];
+            if (this.data.battle) typeTexts.push('Battle');
+            if (this.data.choices) typeTexts.push('Choice');
+            if (this.data.end) typeTexts.push('End');
+            if (typeTexts.length === 0) typeTexts.push('Basic');
+            
+            ctx.fillText(typeTexts.join(' | '), this.x + this.width/2, this.y + 70);
+
+            // Draw connection count
+            let connectionCount = 0;
+            if (this.data.choices) connectionCount += this.data.choices.length;
+            if (this.data.next_node) connectionCount += 1;
+            if (this.data.victory_node) connectionCount += 1;
+            if (this.data.defeat_node) connectionCount += 1;
+            
+            ctx.fillText(`Connections: ${connectionCount}`, this.x + this.width/2, this.y + 90);
+
+            ctx.restore();
+        }
+
+        adjustColor(color, amount) {
+            const hex = color.replace('#', '');
+            const r = Math.max(0, Math.min(255, parseInt(hex.substring(0, 2), 16) + amount));
+            const g = Math.max(0, Math.min(255, parseInt(hex.substring(2, 4), 16) + amount));
+            const b = Math.max(0, Math.min(255, parseInt(hex.substring(4, 6), 16) + amount));
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
         }
 
         getColor() {
-            if (this.data.battle) return '#ff6b6b';
-            if (this.data.end) return '#51cf66';
-            if (this.data.choices) return '#339af0';
-            return '#495057';
+            if (this.data.battle) return '#FF4B4B';
+            if (this.data.end) return '#00C853';
+            if (this.data.choices) return '#2196F3';
+            return '#7E57C2';
         }
     }
 
     function drawArrow(ctx, fromX, fromY, toX, toY, text) {
-        // Calculate control points for curved lines
+        ctx.save();
+        
+        // Set up gradient for connection line
+        const gradient = ctx.createLinearGradient(fromX, fromY, toX, toY);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+
+        // Draw glowing effect
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        // Calculate curve control points
         const dx = toX - fromX;
         const dy = toY - fromY;
         const midX = fromX + dx * 0.5;
         const midY = fromY + dy * 0.5;
         
-        // Draw curved arrow
+        // Draw curved path with animation
         ctx.beginPath();
         ctx.moveTo(fromX, fromY);
         ctx.quadraticCurveTo(midX, fromY, toX, toY);
         ctx.stroke();
 
-        // Arrow head
+        // Draw animated flow particles
+        const time = Date.now() * 0.001;
+        const particleCount = 3;
+        for (let i = 0; i < particleCount; i++) {
+            const t = ((time + i / particleCount) % 1);
+            const x = fromX + (toX - fromX) * t;
+            const y = fromY + (toY - fromY) * t + Math.sin(t * Math.PI) * 20;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+        }
+
+        // Draw arrow head
         const angle = Math.atan2(toY - fromY, toX - fromX);
         ctx.beginPath();
         ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - 10 * Math.cos(angle - Math.PI/6), toY - 10 * Math.sin(angle - Math.PI/6));
-        ctx.lineTo(toX - 10 * Math.cos(angle + Math.PI/6), toY - 10 * Math.sin(angle + Math.PI/6));
+        ctx.lineTo(toX - 15 * Math.cos(angle - Math.PI/6), toY - 15 * Math.sin(angle - Math.PI/6));
+        ctx.lineTo(toX - 15 * Math.cos(angle + Math.PI/6), toY - 15 * Math.sin(angle + Math.PI/6));
         ctx.closePath();
+        ctx.fillStyle = 'white';
         ctx.fill();
 
         // Connection text
