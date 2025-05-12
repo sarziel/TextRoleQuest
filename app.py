@@ -10,16 +10,12 @@ from datetime import datetime
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from database_config import db, init_db_config, Admin, Character, NodeVisit
-from database import create_admin, get_admin, create_character, get_character
-from database import update_character, record_node_visit, get_node_visits, get_character_visits, get_all_characters
+from werkzeug.security import generate_password_hash, check_password_hash
+import local_database as db
 
 # Create Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
-
-# Initialize database
-init_db_config(app)
 
 # Setup Flask-Login
 login_manager = LoginManager()
@@ -28,28 +24,23 @@ login_manager.login_view = 'admin_login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Admin.query.get(int(user_id))
+    return db.get_admin(user_id)
 
 # Função para criar usuário admin
 def create_admin_user():
     """Cria o usuário administrador se não existir"""
     try:
-        db.create_all()
         # Verificar se o usuário admin já existe
-        admin_user = Admin.query.filter_by(username='admin').first()
+        admin_user = db.get_admin_by_username('admin')
         if not admin_user:
             # Criar novo usuário admin
-            admin_user = Admin()
-            admin_user.username = 'admin'
-            admin_user.set_password('admin123')
-            db.session.add(admin_user)
-            db.session.commit()
+            admin_user = {'username': 'admin', 'password_hash': generate_password_hash('admin123')}
+            db.create_admin(admin_user)
             print("Usuário admin criado com sucesso!")
         else:
             print("Usuário admin já existe.")
     except Exception as e:
         print(f"Erro ao criar usuário admin: {e}")
-        db.session.rollback()
 
 # Registrar comando para criar o usuário admin
 @app.cli.command('create-admin')
@@ -62,7 +53,6 @@ def create_admin_command():
 try:
     with app.app_context():
         # Tentar criar o banco de dados e o usuário admin na inicialização
-        db.create_all()
         create_admin_user()
 except Exception as e:
     print(f"Erro na inicialização do banco de dados: {e}")
@@ -87,7 +77,7 @@ def index():
         # Log error but still return the page to avoid breaking navigation
         print(f"Erro na página inicial: {e}")
         return render_template('index.html')
-    
+
 @app.route('/admin-info')
 def admin_info():
     """Informações de diagnóstico do admin"""
@@ -95,24 +85,24 @@ def admin_info():
     db_status = "Conectado"
     admin_exists = "Não encontrado"
     table_info = []
-    
+
     try:
         # Verificar se o usuário admin existe
-        admin = Admin.query.filter_by(username='admin').first()
+        admin = db.get_admin_by_username('admin')
         if admin:
-            admin_exists = "Encontrado (ID: {})".format(admin.id)
-        
-        # Obter informações das tabelas
-        from sqlalchemy import inspect
-        inspector = inspect(db.engine)
-        table_info = inspector.get_table_names()
+            admin_exists = "Encontrado (ID: {})".format(admin['id'])
+        else:
+            admin_exists = "Não encontrado"
+
+
+        table_info = ["Admins", "Characters", "NodeVisits"]
     except Exception as e:
         db_status = "Erro: {}".format(str(e))
-    
+
     # Obter informações dos nós
     node_count = node_map.count_nodes()
     node_examples = list(node_map.nodes.keys())[:5]  # Primeiros 5 nós
-    
+
     return render_template(
         'admin_info.html',
         db_status=db_status,
@@ -146,11 +136,11 @@ def create_character():
         name = request.form.get('name')
         character_class = request.form.get('class')
         gender = request.form.get('gender')
-        
+
         if name and character_class and gender:
             # Create new player character
             new_player = player.Player(name, character_class, gender)
-            
+
             # Store in session
             session['player'] = {
                 'name': new_player.name,
@@ -166,9 +156,9 @@ def create_character():
             }
             session['current_node'] = 'start'
             session['turn_counter'] = 0
-            
+
             return redirect(url_for('game'))
-    
+
     return render_template('create_character.html')
 
 @app.route('/game')
@@ -177,11 +167,11 @@ def game():
     # Check if player exists in session
     if 'player' not in session:
         return redirect(url_for('create_character'))
-    
+
     # Get current node
     current_node_id = session.get('current_node', 'start')
     node_data = node_map.get_node(current_node_id)
-    
+
     return render_template('game.html', node=node_data, node_id=current_node_id, player=session['player'])
 
 @app.route('/make_choice', methods=['POST'])
@@ -189,27 +179,27 @@ def make_choice():
     """Process a player's choice"""
     if 'player' not in session:
         return redirect(url_for('create_character'))
-    
+
     node_id = request.form.get('node_id')
     choice_index = int(request.form.get('choice_index', 0))
-    
+
     # Get the node and choice
     node = node_map.get_node(node_id)
     if 'choices' in node and len(node['choices']) > choice_index:
         choice = node['choices'][choice_index]
-        
+
         # Check if this is a test/challenge
         if 'test' in choice:
             test_type = choice['test']
             difficulty = choice.get('difficulty', 10)
-            
+
             # Get player attribute
             player_attr = session['player'].get(test_type, 0)
-            
+
             # Roll dice (1-20)
             roll = random.randint(1, 20)
             total = roll + player_attr
-            
+
             # Determine success or failure
             if total >= difficulty:
                 # Success
@@ -219,21 +209,21 @@ def make_choice():
                 # Failure
                 session['current_node'] = choice['failure_node']
                 flash(f'Teste de {test_type} falhou! Rolagem: {roll}, Total: {total}', 'danger')
-        
+
         # Check if this is a battle
         elif 'battle' in choice:
             enemy = choice['battle']
             session['battle_enemy'] = enemy
             session['victory_node'] = choice.get('victory_node')
             session['defeat_node'] = choice.get('defeat_node')
-            
+
             # Redirect to battle
             return redirect(url_for('battle_start'))
-        
+
         # Direct navigation
         else:
             session['current_node'] = choice['next_node']
-    
+
     return redirect(url_for('game'))
 
 @app.route('/continue', methods=['POST'])
@@ -241,13 +231,13 @@ def continue_story():
     """Continue to the next node when there are no choices"""
     if 'player' not in session:
         return redirect(url_for('create_character'))
-    
+
     node_id = request.form.get('node_id')
     node = node_map.get_node(node_id)
-    
+
     if 'next_node' in node:
         session['current_node'] = node['next_node']
-    
+
     return redirect(url_for('game'))
 
 @app.route('/command', methods=['POST'])
@@ -255,9 +245,9 @@ def process_command():
     """Process special commands entered by the player"""
     if 'player' not in session:
         return redirect(url_for('create_character'))
-    
+
     command = request.form.get('command', '').strip().lower()
-    
+
     if command == 'status':
         flash('Seus atributos e status são mostrados no painel lateral.', 'info')
     elif command in ['ajuda', 'help']:
@@ -266,7 +256,7 @@ def process_command():
         - status: Ver seus atributos e status
         - ajuda ou help: Mostrar esta ajuda
         - salvar: Salvar manualmente seu progresso
-        
+
         Durante batalhas:
         - atacar: Usar seu atributo físico para atacar
         - defender: Adotar postura defensiva
@@ -278,7 +268,7 @@ def process_command():
         return redirect(url_for('save_game'))
     else:
         flash(f'Comando desconhecido: {command}', 'warning')
-    
+
     return redirect(url_for('game'))
 
 @app.route('/save_game', methods=['GET', 'POST'])
@@ -286,18 +276,18 @@ def save_game():
     """Save the current game state"""
     if 'player' not in session:
         return redirect(url_for('create_character'))
-    
+
     # Get current turn counter
     turn_counter = session.get('turn_counter', 0)
-    
+
     # Save game using the save_load module
     success = save_load.save_game(session['player'], session['current_node'], turn_counter)
-    
+
     if success:
         flash('Jogo salvo com sucesso!', 'success')
     else:
         flash('Erro ao salvar o jogo.', 'danger')
-    
+
     return redirect(url_for('game'))
 
 @app.route('/load_game')
@@ -307,12 +297,12 @@ def load_game():
     if not save_load.save_exists():
         flash('Nenhum jogo salvo encontrado.', 'warning')
         return redirect(url_for('play_game'))
-    
+
     # Load game
     loaded_game = save_load.load_game()
     if loaded_game:
         player_obj, current_node, turn_counter = loaded_game
-        
+
         # Store in session
         session['player'] = {
             'name': player_obj.name,
@@ -328,27 +318,27 @@ def load_game():
         }
         session['current_node'] = current_node
         session['turn_counter'] = turn_counter
-        
+
         flash('Jogo carregado com sucesso!', 'success')
         return redirect(url_for('game'))
     else:
         flash('Erro ao carregar o jogo.', 'danger')
         return redirect(url_for('play_game'))
-        
+
 @app.route('/battle_start')
 def battle_start():
     """Start a battle with an enemy"""
     if 'player' not in session or 'battle_enemy' not in session:
         return redirect(url_for('game'))
-    
+
     # Get enemy data
     enemy_id = session['battle_enemy']
     enemy_data = battle.get_enemy_data(enemy_id)
-    
+
     if not enemy_data:
         flash('Erro ao iniciar batalha: inimigo não encontrado.', 'danger')
         return redirect(url_for('game'))
-    
+
     # Initialize battle session
     session['enemy'] = {
         'id': enemy_id,
@@ -360,9 +350,9 @@ def battle_start():
         'defense': enemy_data['defense'],
         'spirit_resistance': enemy_data.get('spirit_resistance', 10)
     }
-    
+
     session['battle_log'] = [f"Você encontrou um {enemy_data['name']}!"]
-    
+
     return render_template('battle.html', 
                           player=session['player'],
                           enemy=session['enemy'],
@@ -373,25 +363,25 @@ def battle_action():
     """Process a battle action"""
     if 'player' not in session or 'enemy' not in session:
         return redirect(url_for('game'))
-    
+
     action = request.form.get('action')
-    
+
     # Get player and enemy data
     player_data = session['player']
     enemy_data = session['enemy']
-    
+
     # Initialize battle variables
     dice_roll = random.randint(1, 20)
     battle_message = ""
     battle_success = False
     player_damage_taken = 0
     enemy_damage_taken = 0
-    
+
     # Process player action
     if action == 'attack':
         # Physical attack
         attack_total = dice_roll + player_data['physical']
-        
+
         if dice_roll == 20:  # Critical hit
             enemy_damage_taken = (player_data['physical'] * 2) + random.randint(3, 6)
             battle_message = f"Acerto crítico! Você causou {enemy_damage_taken} pontos de dano!"
@@ -412,17 +402,17 @@ def battle_action():
             enemy_damage_taken = 0
             battle_message = "Seu ataque foi bloqueado ou desviado."
             battle_success = False
-    
+
     elif action == 'defend':
         # Defensive stance
         session['defending'] = True
         battle_message = "Você assume uma postura defensiva!"
         battle_success = True
-    
+
     elif action == 'spirit':
         # Spiritual attack/action
         spirit_total = dice_roll + player_data['spiritual']
-        
+
         if dice_roll == 20:  # Critical success
             if random.random() < 0.5:  # 50% chance for damage
                 enemy_damage_taken = player_data['spiritual'] * 2 + random.randint(2, 8)
@@ -451,19 +441,19 @@ def battle_action():
         else:  # Failure
             battle_message = "Você tenta canalizar energia espiritual, mas falha."
             battle_success = False
-    
+
     # Apply damage to enemy
     enemy_data['current_health'] -= enemy_damage_taken
-    
+
     # Log the action
     session['battle_log'].insert(0, battle_message)
-    
+
     # If enemy still alive, process enemy attack
     if enemy_data['current_health'] > 0:
         # Enemy attacks
         enemy_message = f"O {enemy_data['name']} ataca!"
         session['battle_log'].insert(0, enemy_message)
-        
+
         # Calculate damage
         base_damage = enemy_data['attack']
         if session.get('defending', False):
@@ -472,55 +462,55 @@ def battle_action():
         else:
             player_damage_taken = max(1, base_damage - random.randint(0, 2))
             enemy_message = f"Você recebe {player_damage_taken} pontos de dano!"
-        
+
         # Apply damage to player
         player_data['current_health'] -= player_damage_taken
-        
+
         # Log the enemy action
         session['battle_log'].insert(0, enemy_message)
-        
+
         # Reset defending status
         session['defending'] = False
-    
+
     # Update session data
     session['player'] = player_data
     session['enemy'] = enemy_data
-    
+
     # Check if battle is over
     if enemy_data['current_health'] <= 0:
         # Player won
         enemy_rewards = battle.get_enemy_data(enemy_data['id']).get('rewards', {})
         session['battle_rewards'] = enemy_rewards
-        
+
         # Process rewards
         reward_message = "Você ganhou: "
-        
+
         if 'attribute' in enemy_rewards:
             attr_type = enemy_rewards['attribute']['type']
             attr_amount = enemy_rewards['attribute']['amount']
             player_data[attr_type] += attr_amount
             reward_message += f"+{attr_amount} {attr_type}, "
-        
+
         if 'item' in enemy_rewards:
             item = enemy_rewards['item']
             if 'inventory' not in player_data:
                 player_data['inventory'] = []
             player_data['inventory'].append(item)
             reward_message += f"{item}, "
-        
+
         if 'health' in enemy_rewards:
             health_amount = enemy_rewards['health']
             player_data['current_health'] = min(player_data['current_health'] + health_amount, player_data['max_health'])
             reward_message += f"+{health_amount} de vida, "
-        
+
         # Update session
         session['player'] = player_data
         session['battle_log'].insert(0, "Vitória! " + reward_message[:-2])
-    
+
     elif player_data['current_health'] <= 0:
         # Player lost
         session['battle_log'].insert(0, f"Você foi derrotado pelo {enemy_data['name']}!")
-    
+
     # Render the battle template with updated data
     return render_template('battle.html', 
                           player=session['player'],
@@ -535,21 +525,21 @@ def battle_end():
     """End the battle and return to the game"""
     if 'player' not in session:
         return redirect(url_for('create_character'))
-    
+
     result = request.form.get('result')
-    
+
     if result == 'victory':
         # Go to victory node
         session['current_node'] = session.get('victory_node', 'start')
     else:
         # Go to defeat node
         session['current_node'] = session.get('defeat_node', 'start')
-    
+
     # Clean up battle session data
     for key in ['enemy', 'battle_enemy', 'battle_log', 'battle_rewards', 'victory_node', 'defeat_node', 'defending']:
         if key in session:
             session.pop(key)
-    
+
     return redirect(url_for('game'))
 
 # ==============================================================================
@@ -561,22 +551,21 @@ def admin_login():
     """Admin login page"""
     if current_user.is_authenticated:
         return redirect(url_for('admin_dashboard'))
-    
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
-        admin = Admin.query.filter_by(username=username).first()
-        
-        if admin and admin.check_password(password):
+
+        admin = db.get_admin_by_username(username)
+
+        if admin and check_password_hash(admin['password_hash'], password):
             login_user(admin)
-            admin.last_login = datetime.utcnow()
-            db.session.commit()
+            db.update_admin_last_login(admin['id'], datetime.utcnow())
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('admin_dashboard'))
         else:
             flash('Usuário ou senha inválidos.', 'danger')
-    
+
     return render_template('admin/login.html')
 
 @app.route('/admin/logout')
@@ -593,22 +582,19 @@ def admin_dashboard():
     """Admin dashboard"""
     # Count nodes
     node_count = node_map.count_nodes()
-    
+
     # Count characters
-    character_count = Character.query.count()
-    
+    character_count = db.count_characters()
+
     # Count node visits
-    node_visit_count = NodeVisit.query.count()
-    
+    node_visit_count = db.count_node_visits()
+
     # Get most visited nodes
-    top_nodes = db.session.query(
-        NodeVisit.node_id, 
-        db.func.count(NodeVisit.id).label('visit_count')
-    ).group_by(NodeVisit.node_id).order_by(db.desc('visit_count')).limit(5).all()
-    
+    top_nodes = db.get_top_visited_nodes(5)
+
     # Get recent characters
-    recent_characters = Character.query.order_by(Character.created_at.desc()).limit(5).all()
-    
+    recent_characters = db.get_recent_characters(5)
+
     return render_template(
         'admin/dashboard.html',
         node_count=node_count,
@@ -624,7 +610,7 @@ def admin_nodes():
     """Admin node list"""
     # Get all nodes
     all_nodes = {node_id: node_map.get_node(node_id) for node_id in node_map.nodes.keys()}
-    
+
     return render_template('admin/nodes.html', nodes=all_nodes)
 
 @app.route('/admin/node/<node_id>')
@@ -632,19 +618,17 @@ def admin_nodes():
 def admin_node_detail(node_id):
     """Admin node detail"""
     node = node_map.get_node(node_id)
-    
+
     if 'text' not in node:
         flash('Nó não encontrado.', 'danger')
         return redirect(url_for('admin_nodes'))
-    
+
     # Get node visit count
-    visit_count = NodeVisit.query.filter_by(node_id=node_id).count()
-    
+    visit_count = db.count_node_visits_for_node(node_id)
+
     # Get characters that visited this node
-    characters = db.session.query(Character).join(NodeVisit).filter(
-        NodeVisit.node_id == node_id
-    ).distinct().all()
-    
+    characters = db.get_characters_that_visited_node(node_id)
+
     return render_template(
         'admin/node_detail.html',
         node_id=node_id,
@@ -657,26 +641,28 @@ def admin_node_detail(node_id):
 @admin_required
 def admin_characters():
     """Admin character list"""
-    characters = Character.query.order_by(Character.created_at.desc()).all()
+    characters = db.get_all_characters()
     return render_template('admin/characters.html', characters=characters)
 
 @app.route('/admin/character/<int:character_id>')
 @admin_required
 def admin_character_detail(character_id):
     """Admin character detail"""
-    character = Character.query.get_or_404(character_id)
-    
+    character = db.get_character(character_id)
+
+    if not character:
+        flash('Personagem não encontrado.', 'danger')
+        return redirect(url_for('admin_characters'))
+
     # Get visited nodes
-    visited_nodes = NodeVisit.query.filter_by(character_id=character_id).order_by(
-        NodeVisit.visited_at.desc()
-    ).all()
-    
+    visited_nodes = db.get_node_visits_for_character(character_id)
+
     return render_template(
         'admin/character_detail.html',
         character=character,
         visited_nodes=visited_nodes,
-        inventory=json.loads(character.inventory) if character.inventory else [],
-        abilities=json.loads(character.special_abilities) if character.special_abilities else []
+        inventory=json.loads(character['inventory']) if character['inventory'] else [],
+        abilities=json.loads(character['special_abilities']) if character['special_abilities'] else []
     )
 
 # Utility function to record node visits
@@ -685,11 +671,9 @@ def record_node_visit(node_id):
     # Check if we have a character in the session
     if 'player' in session and 'id' in session['player']:
         character_id = session['player']['id']
-        
+
         # Create a node visit record
-        visit = NodeVisit(node_id=node_id, character_id=character_id)
-        db.session.add(visit)
-        db.session.commit()
+        db.record_node_visit(node_id, character_id)
 
 # Update the game route to record node visits
 original_game = app.view_functions['game']
@@ -699,7 +683,7 @@ def game_with_tracking():
     # Record the node visit
     if 'current_node' in session:
         record_node_visit(session['current_node'])
-    
+
     # Call the original route
     return original_game()
 
